@@ -32,7 +32,7 @@ bool DirectedGraph::findEdge(int sourceIdx, const TreeNode &node) {
 
 std::vector<TreeNode *>::iterator
 DirectedGraph::getIteratorToTargetNodeInNeighbourList(std::vector<TreeNode *> &neighbours,
-                                                      const TreeNode &node) {
+                                                      const TreeNode &node) const {
     return std::find(neighbours.begin(), neighbours.end(), &node);
 }
 
@@ -69,7 +69,7 @@ void DirectedGraph::DFS(int sourceIdx) {
         // Get all adjacent vertices of the popped vertex s
         // If a adjacent has not been visited, then push it
         // to the stack.
-        for (auto& neighIt :  adjList.at(s).neighbours)
+        for (auto &neighIt: adjList.at(s).neighbours)
             if (!visited[neighIt->id])
                 stack.push(neighIt->id);
     }

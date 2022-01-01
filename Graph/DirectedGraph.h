@@ -17,7 +17,7 @@ private:
     std::vector<TreeNode> adjList;
 public:
 
-    DirectedGraph(int noVertices);
+    explicit DirectedGraph(int noVertices);
 
     void addNode(const TreeNode &node);
 
@@ -28,8 +28,7 @@ public:
     bool findEdge(int sourceIdx, const TreeNode &node, std::vector<TreeNode *>::iterator &it);
 
     std::vector<TreeNode *>::iterator
-    getIteratorToTargetNodeInNeighbourList(
-            std::vector<TreeNode *> &neighbours, const TreeNode &node);
+    getIteratorToTargetNodeInNeighbourList(std::vector<TreeNode *> &neighbours, const TreeNode &node) const;
 
     void deleteEdge(int sourceIdx, const TreeNode &node);
 
