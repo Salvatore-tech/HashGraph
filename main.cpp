@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Graph/TreeNode.h"
 #include "Graph/DirectedGraph.h"
+#include "HashTable.h"
 
 int main() {
     TreeNode node_0 = TreeNode();
@@ -24,9 +25,13 @@ int main() {
 
     graph.DFS(0);
 
-//    graph.DFS(1);
 
+    HashTable hashTable = HashTable(5);
+    hashTable.insertNode(node_0);
+    hashTable.insertNode(node_1);
 
+    std::cout << hashTable[0];
+    std::cout << hashTable;
 
 
     return 0;
