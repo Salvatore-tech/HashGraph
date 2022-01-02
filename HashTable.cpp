@@ -7,7 +7,6 @@
 
 HashTable::HashTable(int bucketNo) : capacity{bucketNo} {
     table = new TreeNode *[capacity];
-//    dummy = new TreeNode();
     for (int i = 0; i < capacity; i++)
         table[i] = nullptr;
     size = 0;
@@ -50,3 +49,32 @@ TreeNode *HashTable::operator[](int index) const {
     }
     return table[index];
 }
+
+TreeNode *HashTable::deleteNode(int key) {
+    TreeNode **nodeToDelete = getByKey(key);
+    if (nodeToDelete != nullptr) {
+        TreeNode *temp = *nodeToDelete;
+        *nodeToDelete = dummy;
+        size--;
+        return temp;
+    }
+    return nullptr;
+}
+
+TreeNode **HashTable::getByKey(int key) {
+    int hashIndex = hashCode(key);
+    int loopCounter = 0;
+
+    while (table[hashIndex] != nullptr) {
+        if (loopCounter++ > capacity)
+            return nullptr;
+
+        if (table[hashIndex]->id == key)
+            return &table[hashIndex];
+
+        hashIndex++;
+        hashIndex %= capacity;
+    }
+    return nullptr;
+}
+

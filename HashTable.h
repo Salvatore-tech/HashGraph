@@ -24,6 +24,10 @@ public:
 
     void insertNode(TreeNode &treeNode);
 
+    TreeNode *deleteNode(int key);
+
+    TreeNode **getByKey(int key);
+
     TreeNode *operator[](int) const;
 
     friend std::ostream &operator<<(std::ostream &os, const HashTable &table);
