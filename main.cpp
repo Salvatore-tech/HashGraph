@@ -1,9 +1,11 @@
 #include <iostream>
 #include "Graph/TreeNode.h"
-#include "Graph/DirectedGraph.h"
 #include "HashTable.h"
+#include "IO/RWFileHandler.h"
 
 int main() {
+    std::string inputFile = "input.txt";
+
     TreeNode node_0 = TreeNode();
     TreeNode node_1 = TreeNode();
     TreeNode node_2 = TreeNode();
@@ -29,8 +31,7 @@ int main() {
     hashTable.insertNode(node_0);
     hashTable.insertNode(node_1);
     hashTable.insertNode(node_2);
-//    hashTable.insertNode(node_3);
-//    hashTable.insertNode(node_4);>
+
 
     std::cout << hashTable;
 
@@ -44,5 +45,13 @@ int main() {
     std::cout << hashTable;
 
 
-    return 0;
+    std::map<int, std::vector<int>> graphData;
+
+    RWFileHandler rwFileHandler = RWFileHandler();
+    if (!rwFileHandler.readInputGraph(inputFile, graphData))
+        return -1;
+
+    std::cout << graphData[0].size();
+
+
 }

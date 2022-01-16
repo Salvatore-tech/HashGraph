@@ -3,4 +3,4 @@ project(HashGraph)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(HashGraph main.cpp Graph/TreeNode.h Graph/DirectedGraph.cpp Graph/DirectedGraph.h HashTable.cpp HashTable.h)
+add_executable(HashGraph main.cpp Graph/TreeNode.h Graph/DirectedGraph.cpp Graph/DirectedGraph.h HashTable.cpp HashTable.h IO/RWFileHandler.cpp IO/RWFileHandler.h)
