@@ -15,31 +15,31 @@ private:
     // TODO
 public:
 
-    int id;
+    int key;
     std::string name;
     std::vector<TreeNode *> neighbours;
 
-    TreeNode() { this->id = counter++;}
+    TreeNode() { this->key = counter++; }
 
     TreeNode(const std::string &name, const std::vector<TreeNode *> &neighbours) : name(name), neighbours(neighbours) {
-        this->id = counter++;
+        this->key = counter++;
         this->name = name;
         this->neighbours = neighbours;
     }
 
     TreeNode(const std::string &name) : name(name) {
-        this->id = counter++;
+        this->key = counter++;
         this->name = name;
         this->neighbours.reserve(5);
     }
 
 
     int getId() const {
-        return id;
+        return key;
     }
 
-    void setId(int id) {
-        TreeNode::id = id;
+    void setKey(int key) {
+        TreeNode::key = key;
     }
 
     const std::string &getName() const {

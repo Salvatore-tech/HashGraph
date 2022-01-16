@@ -17,17 +17,17 @@ int HashTable::hashCode(int key) const {
 }
 
 void HashTable::insertNode(TreeNode &treeNode) {
-    int hashIndex = hashCode(treeNode.id);
+    int hashIndex = hashCode(treeNode.key);
 
     // find next free space
     while (table[hashIndex] != nullptr
-           && table[hashIndex]->id != treeNode.id
-           && table[hashIndex]->id != -1) {
+           && table[hashIndex]->key != treeNode.key
+           && table[hashIndex]->key != -1) {
         hashIndex++;
         hashIndex %= capacity;
     }
 //
-//    if (table[hashIndex] == nullptr || table[hashIndex]->id == -1) {
+//    if (table[hashIndex] == nullptr || table[hashIndex]->key == -1) {
     size++;
     table[hashIndex] = &treeNode;
 
@@ -39,7 +39,7 @@ std::ostream &operator<<(std::ostream &os, const HashTable &table) {
         if (table[i] == nullptr)
             os << "[" << i << "]: is empty" << std::endl;
         else
-            os << "[" << i << "]: " << table[i]->id << std::endl;
+            os << "[" << i << "]: " << table[i]->key << std::endl;
     return os;
 }
 
@@ -69,7 +69,7 @@ TreeNode **HashTable::getByKey(int key) {
         if (loopCounter++ > capacity)
             return nullptr;
 
-        if (table[hashIndex]->id == key)
+        if (table[hashIndex]->key == key)
             return &table[hashIndex];
 
         hashIndex++;

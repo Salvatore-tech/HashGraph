@@ -51,7 +51,7 @@ void DirectedGraph::DFS(int sourceIdx) {
     std::stack<int> stack;
 
     // Push the current source node.
-    stack.push(adjList.at(sourceIdx).id);
+    stack.push(adjList.at(sourceIdx).key);
 
     while (!stack.empty()) {
         // Pop a vertex from stack and print it
@@ -70,8 +70,8 @@ void DirectedGraph::DFS(int sourceIdx) {
         // If a adjacent has not been visited, then push it
         // to the stack.
         for (auto &neighIt: adjList.at(s).neighbours)
-            if (!visited[neighIt->id])
-                stack.push(neighIt->id);
+            if (!visited[neighIt->key])
+                stack.push(neighIt->key);
     }
 
 }
@@ -83,9 +83,9 @@ const std::vector<TreeNode> &DirectedGraph::getAdjList() const {
 
 std::ostream &operator<<(std::ostream &os, const DirectedGraph &graph) {
     for (auto &node: graph.adjList) {
-        std::cout << node.id << node.name << " has the following neighbours :";
+        std::cout << node.key << node.name << " has the following neighbours :";
         for (auto &neighbour: node.neighbours)
-            std::cout << neighbour->id << neighbour->name;
+            std::cout << neighbour->key << neighbour->name;
         printf("\n");
     }
     return os;
