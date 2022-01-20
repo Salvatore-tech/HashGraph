@@ -2,6 +2,7 @@
 #include "Graph/TreeNode.h"
 #include "HashTable.h"
 #include "IO/RWFileHandler.h"
+#include "IO/FileMetadata.h"
 
 int main() {
     std::string inputFile = "input.txt";
@@ -48,10 +49,12 @@ int main() {
     std::map<int, std::vector<int>> graphData;
 
     RWFileHandler rwFileHandler = RWFileHandler();
-    if (!rwFileHandler.readInputGraph(inputFile, graphData))
-        return -1;
+    const FileMetadata &fileMetadata = rwFileHandler.readInputGraph(inputFile, graphData);
 
-    std::cout << graphData[0].size();
+    if (fileMetadata.getOperationStatus()) {
+        std::cout << "Number of nodes read: " << fileMetadata.getNumberOfNodes() << " number of edges read: "
+                  << fileMetadata.getNumberOfEdges() << std::endl;
+    }
 
 
 }

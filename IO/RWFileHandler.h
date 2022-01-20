@@ -7,11 +7,12 @@
 
 #include <map>
 #include <vector>
+#include "FileMetadata.h"
 
 class RWFileHandler {
 private:
 public:
-    bool readInputGraph(const std::string &fileName, std::map<int, std::vector<int>> &graphBuffer) const;
+    FileMetadata readInputGraph(const std::string &fileName, std::map<int, std::vector<int>> &graphBuffer) const;
 };
 
 

@@ -5,8 +5,10 @@
 #include <fstream>
 #include <iostream>
 #include "RWFileHandler.h"
+#include "FileMetadata.h"
 
-bool RWFileHandler::readInputGraph(const std::string &fileName, std::map<int, std::vector<int>> &graphBuffer) const {
+FileMetadata
+RWFileHandler::readInputGraph(const std::string &fileName, std::map<int, std::vector<int>> &graphBuffer) const {
     int sourceEdge;
     int destinationEdge;
     int numberOfLinesRead = 0;
@@ -17,7 +19,7 @@ bool RWFileHandler::readInputGraph(const std::string &fileName, std::map<int, st
     inputFile.open(fileName);
     if (!inputFile.is_open()) {
         std::cout << "Could not open " << fileName << std::endl;
-        return false;
+        return {false, 0, 0};
     }
 
     inputFile >> numberOfNodes >> numberOfEdges;
@@ -31,9 +33,9 @@ bool RWFileHandler::readInputGraph(const std::string &fileName, std::map<int, st
 
     if (numberOfLinesRead < numberOfEdges - 1) { // Adding the first row
         std::cout << "The input file: " << fileName << " has been corrupted!" << std::endl;
-        return false;
+        return {false, 0, 0};
     }
-    return true;
+    return {true, numberOfNodes, numberOfEdges};
 }
 
 
