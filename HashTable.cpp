@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <map>
 #include "HashTable.h"
 
 HashTable::HashTable(int bucketNo) : capacity{bucketNo} {
@@ -12,25 +13,31 @@ HashTable::HashTable(int bucketNo) : capacity{bucketNo} {
     size = 0;
 }
 
+HashTable::HashTable(const std::map<int, std::vector<int>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
+    for (auto const&[key, val]: graphData) {
+        int index = this->insertNode(new TreeNode(key));
+        table[index]->setNeighbours(val);
+    }
+}
+
 int HashTable::hashCode(int key) const {
     return key % capacity;
 }
 
-void HashTable::insertNode(TreeNode &treeNode) {
-    int hashIndex = hashCode(treeNode.key);
+int HashTable::insertNode(TreeNode *treeNode) {
+    int hashIndex = hashCode(treeNode->key);
 
     // find next free space
     while (table[hashIndex] != nullptr
-           && table[hashIndex]->key != treeNode.key
+           && table[hashIndex]->key != treeNode->key
            && table[hashIndex]->key != -1) {
         hashIndex++;
         hashIndex %= capacity;
     }
-//
-//    if (table[hashIndex] == nullptr || table[hashIndex]->key == -1) {
-    size++;
-    table[hashIndex] = &treeNode;
 
+    size++;
+    table[hashIndex] = treeNode;
+    return hashIndex;
 }
 
 std::ostream &operator<<(std::ostream &os, const HashTable &table) {
@@ -38,8 +45,12 @@ std::ostream &operator<<(std::ostream &os, const HashTable &table) {
     for (int i = 0; i < table.capacity; i++)
         if (table[i] == nullptr)
             os << "[" << i << "]: is empty" << std::endl;
-        else
-            os << "[" << i << "]: " << table[i]->key << std::endl;
+        else {
+            os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
+            for (auto const &edge: table[i]->getNeighbours())
+                os << edge->getKey() << "\t";
+            std::endl(os);
+        }
     return os;
 }
 
@@ -77,4 +88,7 @@ TreeNode **HashTable::getByKey(int key) {
     }
     return nullptr;
 }
+
+
+
 

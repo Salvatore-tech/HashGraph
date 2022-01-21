@@ -8,21 +8,18 @@
 
 #include <list>
 #include <ostream>
+#include <map>
 #include "Graph/TreeNode.h"
 
 class HashTable {
-private:
-    TreeNode **table;
-    TreeNode *dummy{};
-    int capacity;
-    int size;
-
 public:
     HashTable(int bucketNo);
 
+    HashTable(const std::map<int, std::vector<int>> &graphData, int numbersOfNodes);
+
     int hashCode(int key) const;
 
-    void insertNode(TreeNode &treeNode);
+    int insertNode(TreeNode *treeNode);
 
     TreeNode *deleteNode(int key);
 
@@ -31,6 +28,12 @@ public:
     TreeNode *operator[](int) const;
 
     friend std::ostream &operator<<(std::ostream &os, const HashTable &table);
+
+private:
+    TreeNode **table;
+    TreeNode *dummy{};
+    int capacity;
+    int size;
 };
 
 

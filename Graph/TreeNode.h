@@ -11,14 +11,7 @@
 static int counter = 0;
 
 class TreeNode {
-private:
-    // TODO
 public:
-
-    int key;
-    std::string name;
-    std::vector<TreeNode *> neighbours;
-
     TreeNode() { this->key = counter++; }
 
     TreeNode(const std::string &name, const std::vector<TreeNode *> &neighbours) : name(name), neighbours(neighbours) {
@@ -27,14 +20,12 @@ public:
         this->neighbours = neighbours;
     }
 
-    TreeNode(const std::string &name) : name(name) {
-        this->key = counter++;
-        this->name = name;
-        this->neighbours.reserve(5);
+    TreeNode(int key) {
+        this->key = key;
     }
 
 
-    int getId() const {
+    int getKey() const {
         return key;
     }
 
@@ -54,8 +45,9 @@ public:
         return neighbours;
     }
 
-    void setNeighbours(const std::vector<TreeNode *> &neighbours) {
-        TreeNode::neighbours = neighbours;
+    void setNeighbours(const std::vector<int> neighboursKey) {
+        for (auto const &neighbourKey: neighboursKey)
+            this->neighbours.push_back(new TreeNode(neighbourKey));
     }
 
 
@@ -67,6 +59,15 @@ public:
     bool operator!=(const TreeNode &rhs) const {
         return !(rhs == *this);
     }
+
+    friend class HashTable;
+
+    friend class DirectedGraph;
+
+private:
+    int key;
+    std::string name;
+    std::vector<TreeNode *> neighbours;
 };
 
 #endif //HASHGRAPH_TREENODE_H
