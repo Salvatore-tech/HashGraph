@@ -83,9 +83,9 @@ const std::vector<TreeNode> &DirectedGraph::getAdjList() const {
 
 std::ostream &operator<<(std::ostream &os, const DirectedGraph &graph) {
     for (auto &node: graph.adjList) {
-        std::cout << node.key << node.name << " has the following neighbours :";
-        for (auto &neighbour: node.neighbours)
-            std::cout << neighbour->key << neighbour->name;
+        std::cout << node.getKey() << node.getName() << " has the following neighbours :";
+        for (auto &neighbour: node.getNeighbours())
+            std::cout << neighbour->getKey() << neighbour->getName();
         printf("\n");
     }
     return os;

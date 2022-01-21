@@ -31,7 +31,7 @@ RWFileHandler::readInputGraph(const std::string &fileName, std::map<int, std::ve
     }
     inputFile.close();
 
-    if (numberOfLinesRead < numberOfEdges - 1) { // Adding the first row
+    if (numberOfLinesRead != numberOfEdges) { // Adding the first row
         std::cout << "The input file: " << fileName << " has been corrupted!" << std::endl;
         return {false, 0, 0};
     }
