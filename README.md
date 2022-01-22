@@ -11,7 +11,7 @@ The input file must be a .txt file and the data to insert into the graph are int
 Then, the edges are listed accordingly by specifying the source and the target node.
 
 ### Exemple 
-![alt text](https://github.com/Salvatore-tech/HashGraph/blob/master/graph_exemple.png)  
+![alt text](https://github.com/Salvatore-tech/HashGraph/blob/master/resources/graph_exemple.png)  
 
 3 5  (Three nodes with five edges)  
 1 2  (Edge from 1 to 2)  
