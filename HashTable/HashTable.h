@@ -9,7 +9,7 @@
 #include <list>
 #include <ostream>
 #include <map>
-#include "../Graph/TreeNode.h"
+#include "../Graph/GraphNode.h"
 
 template<typename T>
 class HashTable {
@@ -20,13 +20,13 @@ public:
 
     int hashCode(T key) const;
 
-    int insertNode(TreeNode<T> *treeNode);
+    int insertNode(GraphNode<T> *graphNode);
 
-    TreeNode<T> *deleteNode(T key);
+    GraphNode<T> *deleteNode(T key);
 
-    TreeNode<T> **getByKey(T key);
+    GraphNode<T> **getByKey(T key);
 
-    TreeNode<T> *operator[](int) const;
+    GraphNode<T> *operator[](int) const;
 
     friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) {
         os << "HashTable data: \t" << " capacity: " << table.capacity << " size: " << table.size << std::endl;
@@ -35,7 +35,7 @@ public:
                 os << "[" << i << "]: is empty" << std::endl;
             else {
                 os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
-                for (auto const &edge: table[i]->getNeighbours())
+                for (auto const &edge: table[i]->getEdges())
                     os << edge->getKey() << "\t";
                 std::endl(os);
             }
@@ -43,12 +43,11 @@ public:
     }
 
 private:
-    TreeNode<T> **table;
-    TreeNode<T> *dummy{};
+    GraphNode<T> **table;
+    GraphNode<T> *dummy{};
     int capacity;
     int size;
 
 };
-
 
 #endif //HASHGRAPH_HASHTABLE_H

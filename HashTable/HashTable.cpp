@@ -11,7 +11,7 @@ class HashTable<int>; // Types of values stored into the hash table
 
 template<typename T>
 HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
-    table = new TreeNode<T> *[capacity];
+    table = new GraphNode<T> *[capacity];
     for (int i = 0; i < capacity; i++)
         table[i] = nullptr;
     size = 0;
@@ -19,9 +19,9 @@ HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
 
 template<typename T>
 HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
-    for (auto const&[key, val]: graphData) {
-        int index = this->insertNode(new TreeNode(key));
-        table[index]->setNeighbours(val);
+    for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
+        int index = this->insertNode(new GraphNode(keyOfTheNode));
+        table[index]->addEdge(edgesOfTheNode);
     }
 }
 
@@ -31,19 +31,19 @@ int HashTable<T>::hashCode(T key) const {
 }
 
 template<typename T>
-int HashTable<T>::insertNode(TreeNode<T> *treeNode) {
-    int hashIndex = hashCode(treeNode->key);
+int HashTable<T>::insertNode(GraphNode<T> *graphNode) {
+    int hashIndex = hashCode(graphNode->key);
 
     // find next free space
     while (table[hashIndex] != nullptr
-           && table[hashIndex]->key != treeNode->key
+           && table[hashIndex]->key != graphNode->key
            && table[hashIndex]->key != -1) {
         hashIndex++;
         hashIndex %= capacity;
     }
 
     size++;
-    table[hashIndex] = treeNode;
+    table[hashIndex] = graphNode;
     return hashIndex;
 }
 //template <typename T>
@@ -54,7 +54,7 @@ int HashTable<T>::insertNode(TreeNode<T> *treeNode) {
 //            os << "[" << i << "]: is empty" << std::endl;
 //        else {
 //            os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
-//            for (auto const &edge: table[i]->getNeighbours())
+//            for (auto const &edge: table[i]->getEdges())
 //                os << edge->getKey() << "\t";
 //            std::endl(os);
 //        }
@@ -62,7 +62,7 @@ int HashTable<T>::insertNode(TreeNode<T> *treeNode) {
 //}
 
 template<typename T>
-TreeNode<T> *HashTable<T>::operator[](int index) const {
+GraphNode<T> *HashTable<T>::operator[](int index) const {
     if (index >= capacity) {
         std::cout << "Index out of bound" << std::endl;
     }
@@ -70,10 +70,10 @@ TreeNode<T> *HashTable<T>::operator[](int index) const {
 }
 
 template<typename T>
-TreeNode<T> *HashTable<T>::deleteNode(T key) {
-    TreeNode<T> **nodeToDelete = getByKey(key);
+GraphNode<T> *HashTable<T>::deleteNode(T key) {
+    GraphNode<T> **nodeToDelete = getByKey(key);
     if (nodeToDelete != nullptr) {
-        TreeNode<T> *temp = *nodeToDelete;
+        GraphNode<T> *temp = *nodeToDelete;
         *nodeToDelete = dummy;
         size--;
         return temp;
@@ -82,7 +82,7 @@ TreeNode<T> *HashTable<T>::deleteNode(T key) {
 }
 
 template<typename T>
-TreeNode<T> **HashTable<T>::getByKey(T key) {
+GraphNode<T> **HashTable<T>::getByKey(T key) {
     int hashIndex = hashCode(key);
     int loopCounter = 0;
 
