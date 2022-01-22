@@ -9,10 +9,10 @@
 #include <vector>
 #include "FileMetadata.h"
 
+template<typename T>
 class RWFileHandler {
-private:
 public:
-    FileMetadata readInputGraph(const std::string &fileName, std::map<int, std::vector<int>> &graphBuffer) const;
+    FileMetadata readInputGraph(const std::string &fileName, std::map<T, std::vector<T>> &graphBuffer) const;
 };
 
 

@@ -10,26 +10,28 @@
 
 static int counter = 0;
 
+template<typename T>
 class TreeNode {
 public:
     TreeNode() { this->key = counter++; }
 
-    TreeNode(const std::string &name, const std::vector<TreeNode *> &neighbours) : name(name), neighbours(neighbours) {
+    TreeNode(const std::string &name, const std::vector<TreeNode<T> *> &neighbours) : name(name),
+                                                                                      neighbours(neighbours) {
         this->key = counter++;
         this->name = name;
         this->neighbours = neighbours;
     }
 
-    TreeNode(int key) {
+    TreeNode(T key) {
         this->key = key;
     }
 
 
-    int getKey() const {
+    T getKey() const {
         return key;
     }
 
-    void setKey(int key) {
+    void setKey(T key) {
         TreeNode::key = key;
     }
 
@@ -45,11 +47,10 @@ public:
         return neighbours;
     }
 
-    void setNeighbours(const std::vector<int> neighboursKey) {
+    void setNeighbours(const std::vector<T> neighboursKey) {
         for (auto const &neighbourKey: neighboursKey)
             this->neighbours.push_back(new TreeNode(neighbourKey));
     }
-
 
     bool operator==(const TreeNode &rhs) const {
         return neighbours == rhs.neighbours &&
@@ -60,12 +61,11 @@ public:
         return !(rhs == *this);
     }
 
-    friend class HashTable;
-
-    friend class DirectedGraph;
+    template<typename> friend
+    class HashTable; //this will however make all templates friends to each other.
 
 private:
-    int key;
+    T key;
     std::string name;
     std::vector<TreeNode *> neighbours;
 };

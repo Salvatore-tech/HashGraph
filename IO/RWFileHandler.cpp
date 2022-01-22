@@ -7,8 +7,12 @@
 #include "RWFileHandler.h"
 #include "FileMetadata.h"
 
+template
+class RWFileHandler<int>; // Types of input file data
+
+template<typename T>
 FileMetadata
-RWFileHandler::readInputGraph(const std::string &fileName, std::map<int, std::vector<int>> &graphBuffer) const {
+RWFileHandler<T>::readInputGraph(const std::string &fileName, std::map<T, std::vector<T>> &graphBuffer) const {
     int sourceEdge;
     int destinationEdge;
     int numberOfLinesRead = 0;

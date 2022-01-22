@@ -36,15 +36,17 @@ int main() {
 //
     std::map<int, std::vector<int>> graphData;
 
-    RWFileHandler rwFileHandler = RWFileHandler();
+    RWFileHandler rwFileHandler = RWFileHandler<int>();
     const FileMetadata &fileMetadata = rwFileHandler.readInputGraph(inputFile, graphData);
 
     if (fileMetadata.getOperationStatus()) {
         std::cout << "Number of nodes read: " << fileMetadata.getNumberOfNodes() << " number of edges read: "
                   << fileMetadata.getNumberOfEdges() << std::endl;
 
-        HashTable tableFromFile = HashTable(graphData, fileMetadata.getNumberOfNodes() * 2);
+        HashTable<int> tableFromFile = HashTable<int>(graphData, fileMetadata.getNumberOfNodes() * 2);
         std::cout << tableFromFile << std::endl;
+
+
     }
 
 
