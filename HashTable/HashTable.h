@@ -9,7 +9,7 @@
 #include <list>
 #include <ostream>
 #include <map>
-#include "Graph/TreeNode.h"
+#include "../Graph/TreeNode.h"
 
 template<typename T>
 class HashTable {

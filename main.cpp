@@ -1,39 +1,21 @@
 #include <iostream>
 #include "Graph/TreeNode.h"
-#include "HashTable.h"
+#include "HashTable/HashTable.h"
 #include "IO/RWFileHandler.h"
 #include "IO/FileMetadata.h"
 
 int main() {
-    std::string inputFile = "input.txt";
-
-    ////Pure graph exemples
-//    DirectedGraph graph = DirectedGraph(5);
-//    graph.addNode(node_0);
-//    graph.addNode(node_1);
-//    graph.addNode(node_2);
-//    graph.addEdge(0, node_1);
-//    graph.addEdge(1, node_2);
-//    graph.addEdge(2, node_0);
-//    if (graph.findEdge(0, node_1))
-//        std::cout << "Edge found" << std::endl;
-//    std::cout << graph << std::endl;
-//    graph.DFS(0);
-
+    std::string inputFile = "./resources/input.txt";
 
 //// Pure exemples on hash table
 //    std::cout << hashTable;
-//
 //    hashTable.deleteNode(0);
-//
 //    if (!hashTable.getByKey(1))
 //        std::cout << "Key not found" << std::endl;
 //    else
 //        std::cout << "Key found" << std::endl;
-//
 //    std::cout << hashTable;
-//
-//
+
     std::map<int, std::vector<int>> graphData;
 
     RWFileHandler rwFileHandler = RWFileHandler<int>();
