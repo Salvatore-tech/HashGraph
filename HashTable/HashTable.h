@@ -24,7 +24,11 @@ public:
 
     GraphNode<T> *deleteNode(T key);
 
-    GraphNode<T> **getByKey(T key);
+    GraphNode<T> *getByKey(T key);
+
+    void addEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode);
+
+    void addEdge(T sourceNodeKey, T targetNodeKey);
 
     GraphNode<T> *operator[](int) const;
 
@@ -36,7 +40,7 @@ public:
             else {
                 os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
                 for (auto const &edge: table[i]->getEdges())
-                    os << edge->getKey() << "\t";
+                    os << edge->getKey() << " ";
                 std::endl(os);
             }
         return os;

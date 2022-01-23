@@ -59,9 +59,9 @@ GraphNode<T> *HashTable<T>::operator[](int index) const {
 
 template<typename T>
 GraphNode<T> *HashTable<T>::deleteNode(T key) {
-    if (GraphNode<T> **nodeToDelete = getByKey(key); nodeToDelete != nullptr) {
-        GraphNode<T> *temp = *nodeToDelete;
-        *nodeToDelete = dummy;
+    if (GraphNode<T> *nodeToDelete = getByKey(key); nodeToDelete != nullptr) {
+        GraphNode<T> *temp = nodeToDelete;
+        nodeToDelete = dummy;
         size--;
         return temp;
     }
@@ -69,7 +69,7 @@ GraphNode<T> *HashTable<T>::deleteNode(T key) {
 }
 
 template<typename T>
-GraphNode<T> **HashTable<T>::getByKey(T key) {
+GraphNode<T> *HashTable<T>::getByKey(T key) {
     int hashIndex = hashCode(key);
     int loopCounter = 0;
 
@@ -78,13 +78,28 @@ GraphNode<T> **HashTable<T>::getByKey(T key) {
             return nullptr;
 
         if (table[hashIndex]->key == key)
-            return &table[hashIndex];
+            return table[hashIndex];
 
         hashIndex++;
         hashIndex %= capacity;
     }
     return nullptr;
 }
+
+template<typename T>
+void HashTable<T>::addEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode) {
+    sourceNode->addEdge(targetNode);
+}
+
+template<typename T>
+void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
+    GraphNode<T> *sourceNode = getByKey(sourceNodeKey);
+    GraphNode<T> *targetNode = getByKey(targetNodeKey);
+    if (sourceNode)
+        addEdge(sourceNode, targetNode);
+}
+
+
 
 
 

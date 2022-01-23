@@ -19,6 +19,8 @@ public:
 
     void addEdge(std::vector<T> neighboursKey);
 
+    void addEdge(GraphNode *targetNode);
+
     template<typename> friend
     class HashTable;
 

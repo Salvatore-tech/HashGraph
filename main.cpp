@@ -28,6 +28,16 @@ int main() {
         HashTable tableFromFile = HashTable<int>(graphData, fileMetadata.getNumberOfNodes() * 2);
         std::cout << tableFromFile << std::endl;
 
+        GraphNode<int> *sourceNode = tableFromFile.getByKey(2);
+        GraphNode<int> *targetNode = tableFromFile.getByKey(3);
+
+
+        sourceNode->addEdge(targetNode);
+        std::cout << tableFromFile << std::endl;
+
+        tableFromFile.addEdge(2, 1);
+        std::cout << tableFromFile << std::endl;
+
 
     }
 
