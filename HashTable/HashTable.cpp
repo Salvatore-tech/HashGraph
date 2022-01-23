@@ -21,7 +21,8 @@ template<typename T>
 HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
     for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
         int index = this->insertNode(new GraphNode(keyOfTheNode));
-        table[index]->addEdge(edgesOfTheNode);
+        if (index >= 0)
+            table[index]->addEdge(edgesOfTheNode);
     }
 }
 
@@ -32,8 +33,10 @@ int HashTable<T>::hashCode(T key) const {
 
 template<typename T>
 int HashTable<T>::insertNode(GraphNode<T> *graphNode) {
-    int hashIndex = hashCode(graphNode->key);
+    if (getByKey(graphNode->key)) // Avoid duplicate keys in the table
+        return -1;
 
+    int hashIndex = hashCode(graphNode->key);
     // find next free space
     while (table[hashIndex] != nullptr
            && table[hashIndex]->key != graphNode->key
@@ -41,25 +44,10 @@ int HashTable<T>::insertNode(GraphNode<T> *graphNode) {
         hashIndex++;
         hashIndex %= capacity;
     }
-
     size++;
     table[hashIndex] = graphNode;
     return hashIndex;
 }
-//template <typename T>
-//std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) {
-//    os << "HashTable data: \t" << " capacity: " << table.capacity << " size: " << table.size << std::endl;
-//    for (int i = 0; i < table.capacity; i++)
-//        if (table[i] == nullptr)
-//            os << "[" << i << "]: is empty" << std::endl;
-//        else {
-//            os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
-//            for (auto const &edge: table[i]->getEdges())
-//                os << edge->getKey() << "\t";
-//            std::endl(os);
-//        }
-//    return os;
-//}
 
 template<typename T>
 GraphNode<T> *HashTable<T>::operator[](int index) const {
@@ -71,8 +59,7 @@ GraphNode<T> *HashTable<T>::operator[](int index) const {
 
 template<typename T>
 GraphNode<T> *HashTable<T>::deleteNode(T key) {
-    GraphNode<T> **nodeToDelete = getByKey(key);
-    if (nodeToDelete != nullptr) {
+    if (GraphNode<T> **nodeToDelete = getByKey(key); nodeToDelete != nullptr) {
         GraphNode<T> *temp = *nodeToDelete;
         *nodeToDelete = dummy;
         size--;
