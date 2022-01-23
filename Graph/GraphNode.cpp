@@ -26,15 +26,31 @@ template<typename T>
 void GraphNode<T>::addEdge(const std::vector<T> neighboursKey) {
     if (neighboursKey.empty())
         return;
-    for (auto const &neighbourKey: neighboursKey)
-        this->edges.push_back(new GraphNode(neighbourKey));
+    for (auto const &neighbourKey: neighboursKey) {
+        if (!hasEdge(neighbourKey)) // Avoid duplicate neighbours
+            this->edges.push_back(new GraphNode(neighbourKey));
+    }
 }
 
 template<typename T>
 void GraphNode<T>::addEdge(GraphNode *targetNode) {
     if (!targetNode || !targetNode->key)
         return;
-    this->edges.push_back(targetNode);
+    if (!hasEdge(targetNode)) // Avoid duplicate neighbours
+        this->edges.push_back(targetNode);
+}
+
+template<typename T>
+bool GraphNode<T>::hasEdge(GraphNode *targetNode) {
+    for (const auto &edge: edges)
+        if (targetNode->operator==(edge))
+            return true;
+    return false;
+}
+
+template<typename T>
+bool GraphNode<T>::hasEdge(T key) {
+    return hasEdge(new GraphNode(key));
 }
 
 

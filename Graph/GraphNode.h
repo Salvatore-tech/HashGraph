@@ -17,9 +17,17 @@ public:
 
     const std::vector<GraphNode *> &getEdges();
 
+    bool hasEdge(T key);
+
+    bool hasEdge(GraphNode *targetNode);
+
     void addEdge(std::vector<T> neighboursKey);
 
     void addEdge(GraphNode *targetNode);
+
+    bool operator==(GraphNode *rhs) const {
+        return key == rhs->key;
+    }
 
     template<typename> friend
     class HashTable;

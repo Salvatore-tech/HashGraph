@@ -30,14 +30,15 @@ int main() {
 
         GraphNode<int> *sourceNode = tableFromFile.getByKey(2);
         GraphNode<int> *targetNode = tableFromFile.getByKey(3);
-
-
         sourceNode->addEdge(targetNode);
         std::cout << tableFromFile << std::endl;
 
         tableFromFile.addEdge(2, 1);
         std::cout << tableFromFile << std::endl;
 
+
+        if (tableFromFile.findEdge(tableFromFile.getByKey(4), 1))
+            std::cout << "The node with key=4 has an edge towards the one with key=1";
 
     }
 

@@ -26,6 +26,10 @@ public:
 
     GraphNode<T> *getByKey(T key);
 
+    GraphNode<T> *findEdge(GraphNode<T> *sourceNode, T key);
+
+    GraphNode<T> *findEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode);
+
     void addEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode);
 
     void addEdge(T sourceNodeKey, T targetNodeKey);

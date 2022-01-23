@@ -50,14 +50,6 @@ int HashTable<T>::insertNode(GraphNode<T> *graphNode) {
 }
 
 template<typename T>
-GraphNode<T> *HashTable<T>::operator[](int index) const {
-    if (index >= capacity) {
-        std::cout << "Index out of bound" << std::endl;
-    }
-    return table[index];
-}
-
-template<typename T>
 GraphNode<T> *HashTable<T>::deleteNode(T key) {
     if (GraphNode<T> *nodeToDelete = getByKey(key); nodeToDelete != nullptr) {
         GraphNode<T> *temp = nodeToDelete;
@@ -87,6 +79,19 @@ GraphNode<T> *HashTable<T>::getByKey(T key) {
 }
 
 template<typename T>
+GraphNode<T> *HashTable<T>::findEdge(GraphNode<T> *sourceNode, T key) {
+    for (auto const &edge: sourceNode->edges)
+        if (edge->key == key)
+            return edge;
+    return nullptr;
+}
+
+template<typename T>
+GraphNode<T> *HashTable<T>::findEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode) {
+    return findEdge(sourceNode, targetNode->key);
+}
+
+template<typename T>
 void HashTable<T>::addEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode) {
     sourceNode->addEdge(targetNode);
 }
@@ -95,8 +100,16 @@ template<typename T>
 void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
     GraphNode<T> *sourceNode = getByKey(sourceNodeKey);
     GraphNode<T> *targetNode = getByKey(targetNodeKey);
-    if (sourceNode)
+    if (sourceNode && !findEdge(sourceNode, targetNode)) // Avoid duplicate edges
         addEdge(sourceNode, targetNode);
+}
+
+template<typename T>
+GraphNode<T> *HashTable<T>::operator[](int index) const {
+    if (index >= capacity) {
+        std::cout << "Index out of bound" << std::endl;
+    }
+    return table[index];
 }
 
 
