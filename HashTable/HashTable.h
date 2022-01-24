@@ -34,6 +34,8 @@ public:
 
     void addEdge(T sourceNodeKey, T targetNodeKey);
 
+    int getSize() const;
+
     GraphNode<T> *operator[](int) const;
 
     friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) {

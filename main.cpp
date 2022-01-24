@@ -3,6 +3,7 @@
 #include "HashTable/HashTable.h"
 #include "IO/RWFileHandler.h"
 #include "IO/FileMetadata.h"
+#include "HashTable/HashTableIterator.h"
 
 int main() {
     std::string inputFile = "./resources/input.txt";
@@ -40,7 +41,12 @@ int main() {
         if (tableFromFile.findEdge(tableFromFile.getByKey(4), 1))
             std::cout << "The node with key=4 has an edge towards the one with key=1";
 
+
+        auto tableIterator = HashTableIterator<int>(&tableFromFile);
+        tableIterator.dfs(2);
     }
+
+
 
 
 }

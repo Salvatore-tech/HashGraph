@@ -112,6 +112,11 @@ GraphNode<T> *HashTable<T>::operator[](int index) const {
     return table[index];
 }
 
+template<typename T>
+int HashTable<T>::getSize() const {
+    return size;
+}
+
 
 
 
