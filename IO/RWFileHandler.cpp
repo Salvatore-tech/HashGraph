@@ -31,6 +31,7 @@ RWFileHandler<T>::readInputGraph(const std::string &fileName, std::map<T, std::v
     while (inputFile >> sourceEdge >> destinationEdge) {
         std::cout << sourceEdge << "\t" << destinationEdge << std::endl;
         graphBuffer[sourceEdge].push_back(destinationEdge);
+        graphBuffer[destinationEdge];
         numberOfLinesRead++;
     }
     inputFile.close();

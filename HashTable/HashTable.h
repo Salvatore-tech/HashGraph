@@ -38,13 +38,15 @@ public:
 
     GraphNode<T> *operator[](int) const;
 
-    friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) {
+    friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) { // TODO: SIGSEGV
         os << "HashTable data: \t" << " capacity: " << table.capacity << " size: " << table.size << std::endl;
         for (int i = 0; i < table.capacity; i++)
             if (table[i] == nullptr)
                 os << "[" << i << "]: is empty" << std::endl;
-            else {
-                os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
+            else if (table[i]->getEdges().empty()) { // The node has not adiajencyList towards other nodes
+                os << "[" << i << "]: " << table[i]->getKey() << std::endl;
+            } else {
+                os << "[" << i << "]: " << table[i]->getKey() << " has adiajencyList towards: ";
                 for (auto const &edge: table[i]->getEdges())
                     os << edge->getKey() << " ";
                 std::endl(os);
