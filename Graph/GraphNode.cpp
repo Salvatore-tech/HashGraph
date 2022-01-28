@@ -8,8 +8,8 @@ template
 class GraphNode<int>;
 
 template<typename T>
-GraphNode<T>::GraphNode(T key) {
-    GraphNode::key = key;
+GraphNode<T>::GraphNode(T key) : key(key) {
+    nodeType = Root;
 }
 
 template<typename T>
@@ -27,8 +27,7 @@ void GraphNode<T>::addEdge(const std::vector<T> neighboursKey) {
     if (neighboursKey.empty())
         return;
     for (auto const &neighbourKey: neighboursKey) {
-        if (!hasEdge(neighbourKey)) // Avoid duplicate neighbours
-            this->edges.push_back(new GraphNode(neighbourKey));
+        addEdge(new GraphNode(neighbourKey));
     }
 }
 
@@ -37,11 +36,15 @@ void GraphNode<T>::addEdge(GraphNode *targetNode) {
     if (!targetNode || !targetNode->key)
         return;
     if (!hasEdge(targetNode)) // Avoid duplicate neighbours
+    {
+        targetNode->nodeType = Leaf;
         this->edges.push_back(targetNode);
+        this->edges.back()->eraseEdges();
+    }
 }
 
 template<typename T>
-bool GraphNode<T>::hasEdge(GraphNode *targetNode) {
+bool GraphNode<T>::hasEdge(GraphNode *targetNode) const {
     for (const auto &edge: edges)
         if (targetNode->operator==(edge))
             return true;
@@ -49,8 +52,8 @@ bool GraphNode<T>::hasEdge(GraphNode *targetNode) {
 }
 
 template<typename T>
-bool GraphNode<T>::hasEdge(T key) {
-    return hasEdge(new GraphNode(key));
+bool GraphNode<T>::hasEdge(T keyOfTheEdge) {
+    return hasEdge(new GraphNode(keyOfTheEdge));
 }
 
 

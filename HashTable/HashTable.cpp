@@ -80,6 +80,8 @@ GraphNode<T> *HashTable<T>::getByKey(T key) {
 
 template<typename T>
 GraphNode<T> *HashTable<T>::findEdge(GraphNode<T> *sourceNode, T key) {
+    if (!sourceNode)
+        return nullptr;
     for (auto const &edge: sourceNode->edges)
         if (edge->key == key)
             return edge;
@@ -92,7 +94,7 @@ GraphNode<T> *HashTable<T>::findEdge(GraphNode<T> *sourceNode, GraphNode<T> *tar
 }
 
 template<typename T>
-void HashTable<T>::addEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode) {
+void HashTable<T>::addEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode) const {
     sourceNode->addEdge(targetNode);
 }
 

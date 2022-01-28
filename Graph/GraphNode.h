@@ -6,12 +6,14 @@
 #define HASHGRAPH_GRAPHNODE_H
 
 #include <vector>
+#include <iostream>
+#include "GraphNodeType.h"
 
 template<typename T>
 class GraphNode {
 public:
 
-    GraphNode(T key);
+    explicit GraphNode(T key);
 
     T getKey() const;
 
@@ -19,11 +21,15 @@ public:
 
     bool hasEdge(T key);
 
-    bool hasEdge(GraphNode *targetNode);
+    bool hasEdge(GraphNode *targetNode) const;
 
     void addEdge(std::vector<T> neighboursKey);
 
     void addEdge(GraphNode *targetNode);
+
+    void eraseEdges() {
+        edges.clear();
+    }
 
     bool operator==(GraphNode *rhs) const {
         return key == rhs->key;
@@ -34,6 +40,7 @@ public:
 
 private:
     T key;
+    GraphNodeType nodeType;
     std::vector<GraphNode *> edges;
 };
 

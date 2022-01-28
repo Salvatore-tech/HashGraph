@@ -8,14 +8,6 @@
 int main() {
     std::string inputFile = "./resources/input.txt";
 
-//// Pure exemples on hash table
-//    std::cout << hashTable;
-//    hashTable.deleteNode(0);
-//    if (!hashTable.getByKey(1))
-//        std::cout << "Key not found" << std::endl;
-//    else
-//        std::cout << "Key found" << std::endl;
-//    std::cout << hashTable;
 
     std::map<int, std::vector<int>> graphData;
 
@@ -45,8 +37,6 @@ int main() {
         auto tableIterator = HashTableIterator<int>(&tableFromFile);
         tableIterator.dfs(2);
     }
-
-
 
 
 }
