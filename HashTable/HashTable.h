@@ -30,7 +30,7 @@ public:
 
     GraphNode<T> *findEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode);
 
-    void addEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode);
+    void addEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode) const;
 
     void addEdge(T sourceNodeKey, T targetNodeKey);
 
