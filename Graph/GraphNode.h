@@ -17,15 +17,15 @@ public:
 
     T getKey() const;
 
-    const std::vector<GraphNode *> &getEdges();
+    std::vector<GraphNode *> &getEdges();
 
     bool hasEdge(T key);
 
-    bool hasEdge(GraphNode *targetNode) const;
+    bool hasEdge(const GraphNode &targetNode) const;
 
     void addEdge(std::vector<T> neighboursKey);
 
-    void addEdge(GraphNode *targetNode);
+    bool addEdge(const GraphNode &targetNode);
 
     void eraseEdges() {
         edges.clear();
