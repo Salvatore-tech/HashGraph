@@ -15,11 +15,12 @@ FileMetadata
 RWFileHandler<T>::readInputGraph(const std::string &fileName, std::map<T, std::vector<T>> &graphBuffer) const {
     int sourceEdge;
     int destinationEdge;
-    int numberOfLinesRead = 0;
+    int numberOfLinesRead;
     int numberOfEdges;
     int numberOfNodes;
     std::ifstream inputFile;
 
+    std::cout << "Reading " << fileName << std::endl;
     inputFile.open(fileName);
     if (!inputFile.is_open()) {
         std::cout << "Could not open " << fileName << std::endl;
@@ -29,14 +30,15 @@ RWFileHandler<T>::readInputGraph(const std::string &fileName, std::map<T, std::v
     inputFile >> numberOfNodes >> numberOfEdges;
 
     while (inputFile >> sourceEdge >> destinationEdge) {
-        std::cout << sourceEdge << "\t" << destinationEdge << std::endl;
+//        std::cout << sourceEdge << "\t" << destinationEdge << std::endl;
         graphBuffer[sourceEdge].push_back(destinationEdge);
         graphBuffer[destinationEdge];
         numberOfLinesRead++;
     }
     inputFile.close();
 
-    if (numberOfLinesRead != numberOfEdges) { // Adding the first row
+    std::cout << numberOfLinesRead << "/" << numberOfEdges << " lines has been read" << std::endl;
+    if (numberOfLinesRead < numberOfEdges) { // Adding the first row
         std::cout << "The input file: " << fileName << " has been corrupted!" << std::endl;
         return {false, 0, 0};
     }

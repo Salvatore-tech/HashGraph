@@ -9,6 +9,7 @@
 #include <list>
 #include <ostream>
 #include <map>
+#include <iomanip>
 #include "../Graph/GraphNode.h"
 
 template<typename T>
@@ -20,33 +21,34 @@ public:
 
     int hashCode(T key) const;
 
-    int insertNode(GraphNode<T> *graphNode);
+    int insert(GraphNode<T> *graphNode);
 
-    GraphNode<T> *deleteNode(T key);
+    void deleteByKey(T key);
 
     GraphNode<T> *getByKey(T key);
 
-    GraphNode<T> *findEdge(GraphNode<T> *sourceNode, T key);
+    GraphNode<T> *findEdge(T sourceNodeKey, T targetNodeKey);
 
     GraphNode<T> *findEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode);
 
-    void addEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode) const;
-
     void addEdge(T sourceNodeKey, T targetNodeKey);
+
+    void removeEdge(T sourceNodeKey, T targetNodeKey);
 
     int getSize() const;
 
     GraphNode<T> *operator[](int) const;
 
-    friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) { // TODO: SIGSEGV
-        os << "HashTable data: \t" << " capacity: " << table.capacity << " size: " << table.size << std::endl;
+    friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) {
+        os << "HashTable data: " << " capacity: " << table.capacity << " size: " << table.size << " load: "
+           << std::setprecision(2) << table.loadFactor << std::endl;
         for (int i = 0; i < table.capacity; i++)
-            if (table[i] == nullptr)
+            if (table[i] == nullptr || table[i] == dummy)
                 os << "[" << i << "]: is empty" << std::endl;
-            else if (table[i]->getEdges().empty()) { // The node has not adiajencyList towards other nodes
+            else if (table[i]->getEdges().empty()) { // The node has its adiajency list empty
                 os << "[" << i << "]: " << table[i]->getKey() << std::endl;
             } else {
-                os << "[" << i << "]: " << table[i]->getKey() << " has adiajencyList towards: ";
+                os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
                 for (auto const &edge: table[i]->getEdges())
                     os << edge->getKey() << " ";
                 std::endl(os);
@@ -55,11 +57,13 @@ public:
     }
 
 private:
+    GraphNode<T> **getNodeRefByKey(T key);
+
     GraphNode<T> **table;
-    GraphNode<T> *dummy{};
+    constexpr static GraphNode<T> *dummy{};
     int capacity;
     int size;
-
+    float loadFactor{};
 };
 
 #endif //HASHGRAPH_HASHTABLE_H

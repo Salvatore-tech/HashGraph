@@ -10,12 +10,12 @@
 template<typename T>
 class HashTableIterator {
 public:
-    HashTableIterator(HashTable<T> *hashTable);
+    explicit HashTableIterator(HashTable<T> &hashTable);
 
     void dfs(T keyOfStartingNode) const;
 
 private:
-    HashTable<T> *hashTable;
+    HashTable<T> &hashTable;
 };
 
 
