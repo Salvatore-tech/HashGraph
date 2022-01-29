@@ -10,7 +10,7 @@ The algorithm reads the data from a input file and the user should be able to pe
 The input file must be a .txt file and the data to insert into the graph are integers. The first row, as the following ones, contains two numbers separeted by a space which represents the number of nodes and the number of edges.
 Then, the edges are listed accordingly by specifying the source and the target node.
 
-### Exemple 
+### Example 
 ![alt text](https://github.com/Salvatore-tech/HashGraph/blob/master/resources/graph_exemple.png)  
 
 3 5  (Three nodes with five edges)  
