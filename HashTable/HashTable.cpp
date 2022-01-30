@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include "HashTable.h"
+#include "hashingStrategy/api/LinearProbingStrategy.h"
 
 template
 class HashTable<int>; // Types of values stored into the hash table
@@ -14,6 +15,7 @@ HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
     table = new GraphNode<T> *[capacity];
     for (int i = 0; i < capacity; i++)
         table[i] = nullptr;
+    hashingStrategy = new LinearProbingStrategy<T>(capacity);
     size = 0;
     loadFactor = 0;
 }
@@ -28,22 +30,17 @@ HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int number
 }
 
 template<typename T>
-int HashTable<T>::hashCode(T key) const {
-    return key % capacity;
-}
-
-template<typename T>
 int HashTable<T>::insert(GraphNode<T> *graphNode) {
+    int iterationNo = 0;
     if (getByKey(graphNode->key)) // Avoid duplicate keys in the table
         return -1;
 
-    int hashIndex = hashCode(graphNode->key);
+    int hashIndex = hashingStrategy->hashCode(graphNode->key);
     // find next free space
     while (table[hashIndex] != nullptr
            && table[hashIndex]->key != graphNode->key
            && table[hashIndex]->key != -1) {
-        hashIndex++;
-        hashIndex %= capacity;
+        hashingStrategy->rehash(graphNode->key, ++iterationNo);
     }
     size++;
     table[hashIndex] = graphNode;
@@ -65,7 +62,7 @@ void HashTable<T>::deleteByKey(T key) {
 
 template<typename T>
 GraphNode<T> *HashTable<T>::getByKey(T key) {
-    int hashIndex = hashCode(key);
+    int hashIndex = hashingStrategy->hashCode(key); // TODO rehash needed?
     int loopCounter = 0;
 
     while (table[hashIndex] != nullptr) {
@@ -83,7 +80,7 @@ GraphNode<T> *HashTable<T>::getByKey(T key) {
 
 template<typename T>
 GraphNode<T> **HashTable<T>::getNodeRefByKey(T key) {
-    int hashIndex = hashCode(key);
+    int hashIndex = hashingStrategy->hashCode(key);
     int loopCounter = 0;
 
     while (table[hashIndex] != nullptr) {

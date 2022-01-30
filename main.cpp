@@ -4,6 +4,8 @@
 #include "IO/RWFileHandler.h"
 #include "IO/FileMetadata.h"
 #include "HashTable/HashTableIterator.h"
+#include "HashTable/hashingStrategy/api/DoubleHashingStrategy.h"
+
 
 void displayMenu();
 
@@ -23,6 +25,7 @@ int main() {
 
     HashTable hashTable = HashTable<int>(inputFileGraphBuffer, fileMetadata.getNumberOfNodes() * 2);
     auto tableIterator = HashTableIterator<int>(hashTable);
+    auto hashingStrategy = DoubleHashingStrategy<int>(20);
 
     int sourceNodeKey;
     int targetNodeKey;

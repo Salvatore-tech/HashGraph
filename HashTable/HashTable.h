@@ -11,6 +11,7 @@
 #include <map>
 #include <iomanip>
 #include "../Graph/GraphNode.h"
+#include "hashingStrategy/api/HashingStrategy.h"
 
 template<typename T>
 class HashTable {
@@ -18,8 +19,6 @@ public:
     HashTable(int bucketNo);
 
     HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
-
-    int hashCode(T key) const;
 
     int insert(GraphNode<T> *graphNode);
 
@@ -60,6 +59,7 @@ private:
     GraphNode<T> **getNodeRefByKey(T key);
 
     GraphNode<T> **table;
+    HashingStrategy<T> *hashingStrategy;
     constexpr static GraphNode<T> *dummy{};
     int capacity;
     int size;
