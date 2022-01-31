@@ -10,6 +10,7 @@
 #include <ostream>
 #include <map>
 #include <iomanip>
+#include <memory>
 #include "../Graph/GraphNode.h"
 #include "hashingStrategy/api/HashingStrategy.h"
 
@@ -18,17 +19,18 @@ class HashTable {
 public:
     HashTable(int bucketNo);
 
-    HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
+//    HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
 
-    int insert(GraphNode<T> *graphNode);
+    int insert(std::shared_ptr<GraphNode<T>> graphNode);
 
     void deleteByKey(T key);
 
-    GraphNode<T> *getByKey(T key);
+    std::shared_ptr<GraphNode<T>> getByKey(T key);
 
-    GraphNode<T> *findEdge(T sourceNodeKey, T targetNodeKey);
+    std::shared_ptr<GraphNode<T>> findEdge(T sourceNodeKey, T targetNodeKey);
 
-    GraphNode<T> *findEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode);
+    std::shared_ptr<GraphNode<T>>
+    findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode);
 
     void addEdge(T sourceNodeKey, T targetNodeKey);
 
@@ -36,13 +38,14 @@ public:
 
     int getSize() const;
 
-    GraphNode<T> *operator[](int) const;
+    std::shared_ptr<GraphNode<T>> operator[](int) const;
 
     friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) {
         os << "HashTable data: " << " capacity: " << table.capacity << " size: " << table.size << " load: "
            << std::setprecision(2) << table.loadFactor << std::endl;
         for (int i = 0; i < table.capacity; i++)
-            if (table[i] == nullptr || table[i] == dummy)
+//            if (table[i] == nullptr || table[i] == dummy)
+            if (!table[i].get())
                 os << "[" << i << "]: is empty" << std::endl;
             else if (table[i]->getEdges().empty()) { // The node has its adiajency list empty
                 os << "[" << i << "]: " << table[i]->getKey() << std::endl;
@@ -58,7 +61,7 @@ public:
 private:
     GraphNode<T> **getNodeRefByKey(T key);
 
-    GraphNode<T> **table;
+    std::vector<std::shared_ptr<GraphNode<T>>> table;
     HashingStrategy<T> *hashingStrategy;
     constexpr static GraphNode<T> *dummy{};
     int capacity;

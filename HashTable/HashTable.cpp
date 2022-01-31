@@ -12,7 +12,7 @@ class HashTable<int>; // Types of values stored into the hash table
 
 template<typename T>
 HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
-    table = new GraphNode<T> *[capacity];
+    table.reserve(capacity);
     for (int i = 0; i < capacity; i++)
         table[i] = nullptr;
     hashingStrategy = new LinearProbingStrategy<T>(capacity);
@@ -20,17 +20,17 @@ HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
     loadFactor = 0;
 }
 
-template<typename T>
-HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
-    for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
-        int index = this->insert(new GraphNode(keyOfTheNode));
-        if (index >= 0)
-            table[index]->addEdge(edgesOfTheNode);
-    }
-}
+//template<typename T>
+//HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
+//    for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
+//        int index = this->insert(new GraphNode(keyOfTheNode));
+//        if (index >= 0)
+//            table[index]->addEdge(edgesOfTheNode);
+//    }
+//}
 
 template<typename T>
-int HashTable<T>::insert(GraphNode<T> *graphNode) {
+int HashTable<T>::insert(std::shared_ptr<GraphNode<T>> graphNode) {
     int iterationNo = 0;
     if (getByKey(graphNode->key)) // Avoid duplicate keys in the table
         return -1;
@@ -48,26 +48,26 @@ int HashTable<T>::insert(GraphNode<T> *graphNode) {
     return hashIndex;
 }
 
-template<typename T>
-void HashTable<T>::deleteByKey(T key) {
-    if (auto nodeToDelete = getNodeRefByKey(key); nodeToDelete != nullptr) {
-        free(*nodeToDelete);
-        *nodeToDelete = dummy;
-        size--;
-        loadFactor = (float) size / (float) capacity;
-        std::cout << "Node with key " << key << " erased\n";
-    } else
-        std::cout << "Could not erase node with key " << key << "\n";
-}
+//template<typename T>
+//void HashTable<T>::deleteByKey(T key) {
+//    if (auto nodeToDelete = getNodeRefByKey(key); nodeToDelete != nullptr) {
+//        free(*nodeToDelete);
+//        *nodeToDelete = dummy;
+//        size--;
+//        loadFactor = (float) size / (float) capacity;
+//        std::cout << "Node with key " << key << " erased\n";
+//    } else
+//        std::cout << "Could not erase node with key " << key << "\n";
+//}
 
 template<typename T>
-GraphNode<T> *HashTable<T>::getByKey(T key) {
+std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key) {
     int hashIndex = hashingStrategy->hashCode(key); // TODO rehash needed?
     int loopCounter = 0;
 
     while (table[hashIndex] != nullptr) {
         if (loopCounter++ > capacity)
-            return nullptr;
+            return {};
 
         if (table[hashIndex]->key == key)
             return table[hashIndex];
@@ -75,49 +75,51 @@ GraphNode<T> *HashTable<T>::getByKey(T key) {
         hashIndex++;
         hashIndex %= capacity;
     }
-    return nullptr;
+    return {};
 }
 
+//template<typename T>
+//GraphNode<T> **HashTable<T>::getNodeRefByKey(T key) {
+//    int hashIndex = hashingStrategy->hashCode(key);
+//    int loopCounter = 0;
+//
+//    while (table[hashIndex] != nullptr) {
+//        if (loopCounter++ > capacity)
+//            return nullptr;
+//
+//        if (table[hashIndex]->key == key)
+//            return &table[hashIndex];
+//
+//        hashIndex++;
+//        hashIndex %= capacity;
+//    }
+//    return nullptr;
+//}
+
 template<typename T>
-GraphNode<T> **HashTable<T>::getNodeRefByKey(T key) {
-    int hashIndex = hashingStrategy->hashCode(key);
-    int loopCounter = 0;
-
-    while (table[hashIndex] != nullptr) {
-        if (loopCounter++ > capacity)
-            return nullptr;
-
-        if (table[hashIndex]->key == key)
-            return &table[hashIndex];
-
-        hashIndex++;
-        hashIndex %= capacity;
-    }
-    return nullptr;
-}
-
-template<typename T>
-GraphNode<T> *HashTable<T>::findEdge(T sourceNodeKey, T targetNodeKey) {
-    GraphNode<T> *sourceNode = getByKey(sourceNodeKey);
-    if (!sourceNode)
+std::shared_ptr<GraphNode<T>> HashTable<T>::findEdge(T sourceNodeKey, T targetNodeKey) {
+    auto sourceNode = getByKey(sourceNodeKey);
+    if (!sourceNode.get())
         return nullptr;
     for (auto const &edge: sourceNode->edges)
         if (edge->key == targetNodeKey)
-            return edge;
+//            return edge; TODO
+            return nullptr;
     return nullptr;
 }
 
 template<typename T>
-GraphNode<T> *HashTable<T>::findEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode) {
+std::shared_ptr<GraphNode<T>>
+HashTable<T>::findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode) {
     return findEdge(sourceNode->key, targetNode->key);
 }
 
 
 template<typename T>
 void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
-    GraphNode<T> *sourceNode = getByKey(sourceNodeKey);
-    GraphNode<T> *targetNode = getByKey(targetNodeKey);
-    if (sourceNode && targetNode && !findEdge(sourceNode, targetNode)) {// Avoid duplicate edges
+    auto sourceNode = getByKey(sourceNodeKey);
+    auto targetNode = getByKey(targetNodeKey);
+    if (sourceNode.get() && targetNode.get() && !findEdge(sourceNode, targetNode)) {// Avoid duplicate edges
         if (sourceNode->addEdge(*targetNode))
             std::cout << "Added edge between " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
     }
@@ -126,8 +128,8 @@ void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
 
 template<typename T>
 void HashTable<T>::removeEdge(T sourceNodeKey, T targetNodeKey) {
-    GraphNode<T> *sourceNode = getByKey(sourceNodeKey);
-    std::vector<GraphNode<T> *> &edgesOfTheSourceNode = sourceNode->getEdges();
+    auto sourceNode = getByKey(sourceNodeKey);
+    auto edgesOfTheSourceNode = sourceNode->getEdges(); // TODO
     int initialEdges = edgesOfTheSourceNode.size();
 
     std::erase_if(edgesOfTheSourceNode, [&targetNodeKey](GraphNode<T> *edge) { return edge->key == targetNodeKey; });
@@ -141,7 +143,7 @@ void HashTable<T>::removeEdge(T sourceNodeKey, T targetNodeKey) {
 }
 
 template<typename T>
-GraphNode<T> *HashTable<T>::operator[](int index) const {
+std::shared_ptr<GraphNode<T>> HashTable<T>::operator[](int index) const {
     if (index >= capacity) {
         std::cout << "Index out of bound" << std::endl;
     }

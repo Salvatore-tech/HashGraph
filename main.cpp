@@ -23,7 +23,7 @@ int main() {
     if (!fileMetadata.getOperationStatus())
         return -1;
 
-    HashTable hashTable = HashTable<int>(inputFileGraphBuffer, fileMetadata.getNumberOfNodes() * 2);
+    HashTable hashTable = HashTable<int>(2);
     auto tableIterator = HashTableIterator<int>(hashTable);
     auto hashingStrategy = DoubleHashingStrategy<int>(20);
 
@@ -58,7 +58,7 @@ int main() {
             case 6:
                 std::cout << "Insert source node key: ";
                 std::cin >> sourceNodeKey;
-                hashTable.deleteByKey(sourceNodeKey);
+//                hashTable.deleteByKey(sourceNodeKey); TODO
                 break;
         }
     } while (choice != 0);
