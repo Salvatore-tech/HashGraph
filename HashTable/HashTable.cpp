@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <map>
+#include <stack>
 #include "HashTable.h"
 #include "hashingStrategy/api/LinearProbingStrategy.h"
 
@@ -18,20 +19,31 @@ HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
     loadFactor = 0;
 }
 
-//template<typename T>
-//HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
-//    for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
-//        int index = this->insert(new GraphNode(keyOfTheNode));
-//        if (index >= 0)
-//            table[index]->addEdge(edgesOfTheNode);
-//    }
-//}
+template<typename T>
+HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
+
+    std::vector<std::shared_ptr<GraphNode<T>>> edgeCache;
+
+    for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
+        int index = this->insert(std::make_shared<GraphNode<T>>(keyOfTheNode));
+        edgeCache.emplace_back(table[index]);
+    }
+
+    int i = 0;
+    for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
+        for (auto const &edgeKey: edgesOfTheNode) {
+            auto ptr = getByKey(edgeKey);
+            edgeCache.at(i++).get()->addEdge(ptr);
+        }
+    }
+
+}
 
 template<typename T>
 int HashTable<T>::insert(std::shared_ptr<GraphNode<T>> graphNode) {
     int iterationNo = 0;
-    if (getByKey(graphNode->key)) // Avoid duplicate keys in the table
-        return -1;
+//    if (getByKey(graphNode->key)) // Avoid duplicate keys in the table // TODO
+//        return -1;
 
     int hashIndex = hashingStrategy->hashCode(graphNode->key);
     // find next free space
@@ -100,9 +112,10 @@ std::shared_ptr<GraphNode<T>> HashTable<T>::findEdge(T sourceNodeKey, T targetNo
     if (!sourceNode.get())
         return nullptr;
     for (auto const &edge: sourceNode->edges)
-        if (edge->key == targetNodeKey)
-//            return edge; TODO
-            return nullptr;
+        if (const auto observe = edge.lock()) {
+            if (observe->hasEdge(targetNodeKey))
+                return {}; // TODO
+        }
     return nullptr;
 }
 
@@ -118,7 +131,7 @@ void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
     auto sourceNode = getByKey(sourceNodeKey);
     auto targetNode = getByKey(targetNodeKey);
     if (sourceNode.get() && targetNode.get() && !findEdge(sourceNode, targetNode)) {// Avoid duplicate edges
-        if (sourceNode->addEdge(*targetNode))
+        if (sourceNode->addEdge(targetNode))
             std::cout << "Added edge between " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
     }
     std::cout << "Could not add the edge between " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
@@ -130,7 +143,7 @@ void HashTable<T>::removeEdge(T sourceNodeKey, T targetNodeKey) {
     auto edgesOfTheSourceNode = sourceNode->getEdges(); // TODO
     int initialEdges = edgesOfTheSourceNode.size();
 
-    std::erase_if(edgesOfTheSourceNode, [&targetNodeKey](GraphNode<T> *edge) { return edge->key == targetNodeKey; });
+//    std::erase_if(edgesOfTheSourceNode, [&targetNodeKey](GraphNode<T> *edge) { return edge->key == targetNodeKey; });
 
     int edgesAfterEraseOperation = edgesOfTheSourceNode.size();
 

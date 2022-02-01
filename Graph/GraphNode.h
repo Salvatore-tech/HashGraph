@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <iostream>
+#include <memory>
 #include "GraphNodeType.h"
 
 template<typename T>
@@ -17,11 +18,13 @@ public:
 
     T getKey() const;
 
-    std::vector<GraphNode *> &getEdges();
+    std::vector<std::weak_ptr<GraphNode<T>>> getEdges();
 
     bool hasEdge(T key);
 
-    bool hasEdge(const GraphNode &targetNode) const;
+    bool hasEdge(const GraphNode<T> &targetNode);
+
+    bool addEdge(std::shared_ptr<GraphNode<T>> targetNode);
 
     void addEdge(std::vector<T> neighboursKey);
 
@@ -40,8 +43,7 @@ public:
 
 private:
     T key;
-    GraphNodeType nodeType;
-    std::vector<GraphNode *> edges;
+    std::vector<std::weak_ptr<GraphNode<T>>> edges;
 };
 
 

@@ -19,7 +19,7 @@ class HashTable {
 public:
     HashTable(int bucketNo);
 
-//    HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
+    HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
 
     int insert(std::shared_ptr<GraphNode<T>> graphNode);
 
@@ -52,7 +52,9 @@ public:
             } else {
                 os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
                 for (auto const &edge: table[i]->getEdges())
-                    os << edge->getKey() << " ";
+                    if (const auto observe = edge.lock()) {
+                        os << observe->getKey() << "";
+                    }
                 std::endl(os);
             }
         return os;
