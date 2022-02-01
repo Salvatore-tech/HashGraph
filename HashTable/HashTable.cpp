@@ -12,9 +12,7 @@ class HashTable<int>; // Types of values stored into the hash table
 
 template<typename T>
 HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
-    table.reserve(capacity);
-    for (int i = 0; i < capacity; i++)
-        table[i] = nullptr;
+    table = new std::shared_ptr<GraphNode<T>>[bucketNo];
     hashingStrategy = new LinearProbingStrategy<T>(capacity);
     size = 0;
     loadFactor = 0;

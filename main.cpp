@@ -27,6 +27,9 @@ int main() {
     auto tableIterator = HashTableIterator<int>(hashTable);
     auto hashingStrategy = DoubleHashingStrategy<int>(20);
 
+    auto node = std::make_shared<GraphNode<int>>(2);
+    hashTable.insert(node);
+
     int sourceNodeKey;
     int targetNodeKey;
     int choice = 0;

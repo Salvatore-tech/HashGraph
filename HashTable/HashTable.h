@@ -61,7 +61,7 @@ public:
 private:
     GraphNode<T> **getNodeRefByKey(T key);
 
-    std::vector<std::shared_ptr<GraphNode<T>>> table;
+    std::shared_ptr<GraphNode<T>> *table;
     HashingStrategy<T> *hashingStrategy;
     constexpr static GraphNode<T> *dummy{};
     int capacity;
