@@ -21,7 +21,6 @@ HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
 
 template<typename T>
 HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
-
     std::vector<std::shared_ptr<GraphNode<T>>> edgeCache;
 
     for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
@@ -33,8 +32,9 @@ HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int number
     for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
         for (auto const &edgeKey: edgesOfTheNode) {
             auto ptr = getByKey(edgeKey);
-            edgeCache.at(i++).get()->addEdge(ptr);
+            edgeCache.at(i).get()->addEdge(ptr);
         }
+        i++;
     }
 
 }
@@ -140,12 +140,21 @@ void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
 template<typename T>
 void HashTable<T>::removeEdge(T sourceNodeKey, T targetNodeKey) {
     auto sourceNode = getByKey(sourceNodeKey);
-    auto edgesOfTheSourceNode = sourceNode->getEdges(); // TODO
-    int initialEdges = edgesOfTheSourceNode.size();
 
-//    std::erase_if(edgesOfTheSourceNode, [&targetNodeKey](GraphNode<T> *edge) { return edge->key == targetNodeKey; });
+    if (!sourceNode.get()) {
+        std::cout << "Could not find a node with the given key\n ";
+        return;
+    }
 
-    int edgesAfterEraseOperation = edgesOfTheSourceNode.size();
+    auto edgesOfTheSourceNode = sourceNode->getEdgesPtr();
+    int initialEdges = edgesOfTheSourceNode->size();
+
+
+    std::erase_if(*edgesOfTheSourceNode, [&targetNodeKey](auto edge) {
+        return edge.lock()->getKey() == targetNodeKey;
+    });
+
+    int edgesAfterEraseOperation = edgesOfTheSourceNode->size();
 
     if (edgesAfterEraseOperation < initialEdges)
         std::cout << "Erased edge from " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
