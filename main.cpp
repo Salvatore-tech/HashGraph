@@ -23,13 +23,9 @@ int main() {
     if (!fileMetadata.getOperationStatus())
         return -1;
 
-    HashTable hashTable = HashTable<int>(inputFileGraphBuffer, fileMetadata.getNumberOfNodes() * 5);
+    HashTable hashTable = HashTable<int>(inputFileGraphBuffer, fileMetadata.getNumberOfNodes() * 2);
     auto tableIterator = HashTableIterator<int>(hashTable);
     auto hashingStrategy = DoubleHashingStrategy<int>(20);
-
-//    HashTable hashTable = HashTable<int>(2);
-//    auto node = std::make_shared<GraphNode<int>>(2);
-//    hashTable.insert(node);
 
     int sourceNodeKey;
     int targetNodeKey;

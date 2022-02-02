@@ -42,6 +42,8 @@ public:
     class HashTable;
 
 private:
+    std::vector<std::weak_ptr<GraphNode<T>>> *getEdgesPtr();
+
     T key;
     std::vector<std::weak_ptr<GraphNode<T>>> edges;
 };

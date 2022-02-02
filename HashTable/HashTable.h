@@ -44,7 +44,6 @@ public:
         os << "HashTable data: " << " capacity: " << table.capacity << " size: " << table.size << " load: "
            << std::setprecision(2) << table.loadFactor << std::endl;
         for (int i = 0; i < table.capacity; i++)
-//            if (table[i] == nullptr || table[i] == dummy)
             if (!table[i].get())
                 os << "[" << i << "]: is empty" << std::endl;
             else if (table[i]->getEdges().empty()) { // The node has its adiajency list empty
@@ -53,7 +52,7 @@ public:
                 os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
                 for (auto const &edge: table[i]->getEdges())
                     if (const auto observe = edge.lock()) {
-                        os << observe->getKey() << "";
+                        os << observe->getKey() << " ";
                     }
                 std::endl(os);
             }

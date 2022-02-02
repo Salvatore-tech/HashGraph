@@ -22,6 +22,11 @@ std::vector<std::weak_ptr<GraphNode<T>>> GraphNode<T>::getEdges() {
     return edges;
 }
 
+template<typename T>
+std::vector<std::weak_ptr<GraphNode<T>>> *GraphNode<T>::getEdgesPtr() {
+    return &edges;
+}
+
 //template<typename T>
 //void GraphNode<T>::addEdge(const std::vector<T> neighboursKey) {
 //    if (neighboursKey.empty())
