@@ -27,9 +27,9 @@ public:
 
     std::shared_ptr<GraphNode<T>> getByKey(T key);
 
-    std::shared_ptr<GraphNode<T>> findEdge(T sourceNodeKey, T targetNodeKey);
+    bool findEdge(T sourceNodeKey, T targetNodeKey);
 
-    std::shared_ptr<GraphNode<T>>
+    bool
     findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode);
 
     void addEdge(T sourceNodeKey, T targetNodeKey);

@@ -89,20 +89,15 @@ std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key) {
 }
 
 template<typename T>
-std::shared_ptr<GraphNode<T>> HashTable<T>::findEdge(T sourceNodeKey, T targetNodeKey) {
+bool HashTable<T>::findEdge(T sourceNodeKey, T targetNodeKey) {
     auto sourceNode = getByKey(sourceNodeKey);
     if (!sourceNode.get())
-        return nullptr;
-    for (auto const &edge: sourceNode->edges)
-        if (const auto observe = edge.lock()) {
-            if (observe->hasEdge(targetNodeKey))
-                return {}; // TODO
-        }
-    return nullptr;
+        return false;
+    return sourceNode->hasEdge(targetNodeKey);
 }
 
 template<typename T>
-std::shared_ptr<GraphNode<T>>
+bool
 HashTable<T>::findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode) {
     return findEdge(sourceNode->key, targetNode->key);
 }
