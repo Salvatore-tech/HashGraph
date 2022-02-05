@@ -39,18 +39,18 @@ HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int number
 }
 
 template<typename T>
-int HashTable<T>::insert(std::shared_ptr<GraphNode<T>> graphNode) {
-    int iterationNo = 0;
-//    if (getByKey(graphNode->key)) // Avoid duplicate keys in the table // TODO
-//        return -1;
+void HashTable<T>::insert(T nodeKey) {
+    if (insert(std::make_shared<GraphNode<T>>(nodeKey)))
+        std::cout << "Added node to the table with key = " << nodeKey << std::endl;
+    else
+        std::cout << "Could not add the node to the table with key = " << nodeKey << std::endl;
+}
 
-    int hashIndex = hashingStrategy->hashCode(graphNode->key);
-    // find next free space
-    while (table[hashIndex] != nullptr
-           && table[hashIndex]->key != graphNode->key
-           && table[hashIndex]->key != -1) {
-        hashingStrategy->rehash(graphNode->key, ++iterationNo);
-    }
+template<typename T>
+int HashTable<T>::insert(std::shared_ptr<GraphNode<T>> graphNode) {
+    int hashIndex = 0;
+    if (getByKey(graphNode->key, hashIndex) && loadFactor < 0.70) // Avoid duplicate keys in the table
+        return -1;
     size++;
     table[hashIndex] = graphNode;
     loadFactor = (float) size / (float) capacity;
@@ -78,6 +78,16 @@ std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key) {
     while (table[hashIndex].get() && table[hashIndex]->key != key)
         hashIndex = hashingStrategy->rehash(key, ++iterationNo);
 
+    return table[hashIndex];
+}
+
+template<typename T>
+std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key, int &hashIndex) {
+    hashIndex = hashingStrategy->hashCode(key);
+    int iterationNo = 0;
+
+    while (table[hashIndex].get() && table[hashIndex]->key != key)
+        hashIndex = hashingStrategy->rehash(key, ++iterationNo);
     return table[hashIndex];
 }
 
@@ -140,6 +150,18 @@ template<typename T>
 int HashTable<T>::getSize() const {
     return size;
 }
+
+template<typename T>
+HashTable<T>::~HashTable() {
+    delete hashingStrategy;
+    for (int i = 0; i < capacity; i++) {
+        table[i].reset();
+    }
+    delete[] table;
+}
+
+
+
 
 
 

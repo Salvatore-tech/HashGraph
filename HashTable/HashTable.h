@@ -21,11 +21,17 @@ public:
 
     HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
 
+    virtual ~HashTable();
+
     int insert(std::shared_ptr<GraphNode<T>> graphNode);
+
+    void insert(T nodeKey);
 
     void deleteByKey(T key);
 
     std::shared_ptr<GraphNode<T>> getByKey(T key);
+
+    std::shared_ptr<GraphNode<T>> getByKey(T key, int &hashIndex);
 
     bool findEdge(T sourceNodeKey, T targetNodeKey);
 
