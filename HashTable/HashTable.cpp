@@ -59,7 +59,7 @@ int HashTable<T>::insert(std::shared_ptr<GraphNode<T>> graphNode) {
 
 template<typename T>
 void HashTable<T>::deleteByKey(T key) {
-    int index = hashingStrategy->hashCode(key); //TODO
+    int index = hashingStrategy->hashCode(key);
     if (table[index].get()) {
         table[index].reset();
         size--;
@@ -72,20 +72,13 @@ void HashTable<T>::deleteByKey(T key) {
 
 template<typename T>
 std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key) {
-    int hashIndex = hashingStrategy->hashCode(key); // TODO rehash needed?
-    int loopCounter = 0;
+    int hashIndex = hashingStrategy->hashCode(key);
+    int iterationNo = 0;
 
-    while (table[hashIndex] != nullptr) {
-        if (loopCounter++ > capacity)
-            return {};
+    while (table[hashIndex].get() && table[hashIndex]->key != key)
+        hashIndex = hashingStrategy->rehash(key, ++iterationNo);
 
-        if (table[hashIndex]->key == key)
-            return table[hashIndex];
-
-        hashIndex++;
-        hashIndex %= capacity;
-    }
-    return {};
+    return table[hashIndex];
 }
 
 template<typename T>
@@ -97,8 +90,7 @@ bool HashTable<T>::findEdge(T sourceNodeKey, T targetNodeKey) {
 }
 
 template<typename T>
-bool
-HashTable<T>::findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode) {
+bool HashTable<T>::findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode) {
     return findEdge(sourceNode->key, targetNode->key);
 }
 
@@ -117,7 +109,6 @@ void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
 template<typename T>
 void HashTable<T>::removeEdge(T sourceNodeKey, T targetNodeKey) {
     auto sourceNode = getByKey(sourceNodeKey);
-
     if (!sourceNode.get()) {
         std::cout << "Could not find a node with the given key\n ";
         return;
@@ -126,13 +117,11 @@ void HashTable<T>::removeEdge(T sourceNodeKey, T targetNodeKey) {
     auto edgesOfTheSourceNode = sourceNode->getEdgesPtr();
     int initialEdges = edgesOfTheSourceNode->size();
 
-
     std::erase_if(*edgesOfTheSourceNode, [&targetNodeKey](auto edge) {
         return edge.lock()->getKey() == targetNodeKey;
     });
 
     int edgesAfterEraseOperation = edgesOfTheSourceNode->size();
-
     if (edgesAfterEraseOperation < initialEdges)
         std::cout << "Erased edge from " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
     else
