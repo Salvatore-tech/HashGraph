@@ -58,7 +58,7 @@ int main() {
             case 6:
                 std::cout << "Insert source node key: ";
                 std::cin >> sourceNodeKey;
-//                hashTable.deleteByKey(sourceNodeKey); TODO
+                hashTable.deleteByKey(sourceNodeKey);
                 break;
         }
     } while (choice != 0);

@@ -17,7 +17,7 @@
 template<typename T>
 class HashTable {
 public:
-    HashTable(int bucketNo);
+    explicit HashTable(int bucketNo);
 
     HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
 
@@ -46,22 +46,29 @@ public:
         for (int i = 0; i < table.capacity; i++)
             if (!table[i].get())
                 os << "[" << i << "]: is empty" << std::endl;
-            else if (table[i]->getEdges().empty()) { // The node has its adiajency list empty
-                os << "[" << i << "]: " << table[i]->getKey() << std::endl;
-            } else {
-                os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
-                for (auto const &edge: table[i]->getEdges())
-                    if (const auto observe = edge.lock()) {
-                        os << observe->getKey() << " ";
+            else {
+                const auto keyOfTheNode = table[i]->getKey();
+                auto edgesOfTheNode = table[i]->getEdges();
+
+                if (edgesOfTheNode.empty()) { // The node no edges
+                    os << "[" << i << "]: " << keyOfTheNode << std::endl;
+                } else {
+                    os << "[" << i << "]: " << keyOfTheNode << " has edges towards: ";
+                    int j = 0;
+                    for (auto const &edge: edgesOfTheNode) {
+                        if (const auto observe = edge.lock()) {
+                            os << observe->getKey() << " ";
+                        } else
+                            edgesOfTheNode.erase(edgesOfTheNode.begin() + j);
+                        j++;
                     }
-                std::endl(os);
+                    std::endl(os);
+                }
             }
         return os;
     }
 
 private:
-    GraphNode<T> **getNodeRefByKey(T key);
-
     std::shared_ptr<GraphNode<T>> *table;
     HashingStrategy<T> *hashingStrategy;
     constexpr static GraphNode<T> *dummy{};

@@ -36,7 +36,6 @@ HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int number
         }
         i++;
     }
-
 }
 
 template<typename T>
@@ -58,17 +57,18 @@ int HashTable<T>::insert(std::shared_ptr<GraphNode<T>> graphNode) {
     return hashIndex;
 }
 
-//template<typename T>
-//void HashTable<T>::deleteByKey(T key) {
-//    if (auto nodeToDelete = getNodeRefByKey(key); nodeToDelete != nullptr) {
-//        free(*nodeToDelete);
-//        *nodeToDelete = dummy;
-//        size--;
-//        loadFactor = (float) size / (float) capacity;
-//        std::cout << "Node with key " << key << " erased\n";
-//    } else
-//        std::cout << "Could not erase node with key " << key << "\n";
-//}
+template<typename T>
+void HashTable<T>::deleteByKey(T key) {
+    int index = hashingStrategy->hashCode(key); //TODO
+    if (table[index].get()) {
+        table[index].reset();
+        size--;
+        loadFactor = (float) size / (float) capacity;
+        std::cout << "Node with key " << key << " erased\n";
+    } else
+        std::cout << "Could not delete node with key " << key << std::endl;
+}
+
 
 template<typename T>
 std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key) {
@@ -87,24 +87,6 @@ std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key) {
     }
     return {};
 }
-
-//template<typename T>
-//GraphNode<T> **HashTable<T>::getNodeRefByKey(T key) {
-//    int hashIndex = hashingStrategy->hashCode(key);
-//    int loopCounter = 0;
-//
-//    while (table[hashIndex] != nullptr) {
-//        if (loopCounter++ > capacity)
-//            return nullptr;
-//
-//        if (table[hashIndex]->key == key)
-//            return &table[hashIndex];
-//
-//        hashIndex++;
-//        hashIndex %= capacity;
-//    }
-//    return nullptr;
-//}
 
 template<typename T>
 std::shared_ptr<GraphNode<T>> HashTable<T>::findEdge(T sourceNodeKey, T targetNodeKey) {
