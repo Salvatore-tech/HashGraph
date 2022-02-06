@@ -8,9 +8,7 @@ template
 class GraphNode<int>;
 
 template<typename T>
-GraphNode<T>::GraphNode(T key) : key(key) {
-
-}
+GraphNode<T>::GraphNode(T key) : key(key) {}
 
 template<typename T>
 T GraphNode<T>::getKey() const {
@@ -27,18 +25,9 @@ std::vector<std::weak_ptr<GraphNode<T>>> *GraphNode<T>::getEdgesPtr() {
     return &edges;
 }
 
-//template<typename T>
-//void GraphNode<T>::addEdge(const std::vector<T> neighboursKey) {
-//    if (neighboursKey.empty())
-//        return;
-//    for (auto const &neighbourKey: neighboursKey) {
-//        addEdge(GraphNode(neighbourKey));
-//    }
-//}
-
 template<typename T>
 bool GraphNode<T>::addEdge(std::shared_ptr<GraphNode<T>> targetNode) {
-    int index = 1;
+    int index = 0;
     for (auto &edge: edges) {
         if (auto tempSharedPtr = edge.lock()) {
             if (tempSharedPtr->getKey() == targetNode->getKey()) {
@@ -46,13 +35,11 @@ bool GraphNode<T>::addEdge(std::shared_ptr<GraphNode<T>> targetNode) {
                 return false;
             }
         } else {
-            std::cout << "Found a dangling weak ptr" << std::endl;
-            edges.erase(edges.begin() + index);
+            edges.erase(edges.begin() + index); //Erasing an expired weak pointer
         }
         index++;
     }
     edges.push_back(targetNode);
-    std::cout << "Adding the edge" << std::endl;
     return true;
 }
 

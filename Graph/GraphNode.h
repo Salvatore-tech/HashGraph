@@ -8,7 +8,6 @@
 #include <vector>
 #include <iostream>
 #include <memory>
-#include "GraphNodeType.h"
 
 template<typename T>
 class GraphNode {
@@ -25,10 +24,6 @@ public:
     bool hasEdge(const GraphNode<T> &targetNode);
 
     bool addEdge(std::shared_ptr<GraphNode<T>> targetNode);
-
-    void addEdge(std::vector<T> neighboursKey);
-
-    bool addEdge(const GraphNode &targetNode);
 
     void eraseEdges() {
         edges.clear();

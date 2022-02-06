@@ -8,7 +8,6 @@
 
 class FileMetadata {
 public:
-
     FileMetadata(int operationStatus, int numberOfNodes, int numberOfEdges) {
         this->operationStatus = operationStatus;
         this->numberOfNodes = numberOfNodes;
