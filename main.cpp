@@ -4,24 +4,21 @@
 #include "IO/InputOutputHandler.h"
 #include "IO/FileMetadata.h"
 #include "HashTable/HashTableIterator.h"
-#include "HashTable/hashingStrategy/api/DoubleHashingStrategy.h"
 
 int main() {
+    int sourceNodeKey;
+    int targetNodeKey;
+    int choice = 0;
     std::map<int, std::vector<int>> inputFileGraphBuffer;
     auto inputOutputHandler = InputOutputHandler<int>();
-
-    const FileMetadata &fileMetadata = inputOutputHandler.readInputGraph(inputFileName, inputFileGraphBuffer);
+    auto fileMetadata = inputOutputHandler.readInputGraph(inputFileName, inputFileGraphBuffer);
 
     if (!fileMetadata.getOperationStatus())
         return -1;
 
     HashTable hashTable = HashTable<int>(inputFileGraphBuffer, fileMetadata.getNumberOfNodes() * 2);
     auto tableIterator = HashTableIterator<int>(hashTable);
-    auto hashingStrategy = DoubleHashingStrategy<int>(20);
 
-    int sourceNodeKey;
-    int targetNodeKey;
-    int choice = 0;
     do {
         inputOutputHandler.displayMenu();
         std::cin >> choice;

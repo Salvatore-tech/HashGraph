@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <stack>
+#include <assert.h>
 #include "HashTable.h"
 #include "hashingStrategy/api/LinearProbingStrategy.h"
 
@@ -21,18 +22,24 @@ HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
 
 template<typename T>
 HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
-    std::vector<std::shared_ptr<GraphNode<T>>> edgeCache;
+    std::vector<std::shared_ptr<GraphNode<T>>> nodeCache;
+    nodeCache.reserve(graphData.size());
 
     for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
-        int index = this->insert(std::make_shared<GraphNode<T>>(keyOfTheNode));
-        edgeCache.emplace_back(table[index]);
+        int index = insert(std::make_shared<GraphNode<T>>(keyOfTheNode));
+        if (index >= 0)
+            nodeCache.emplace_back(table[index]);
+        else
+            std::cerr << "Error when reading from graph buffer\n";
     }
+
+    assert(nodeCache.size() == graphData.size());
 
     int i = 0;
     for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
         for (auto const &edgeKey: edgesOfTheNode) {
             auto ptr = getByKey(edgeKey);
-            edgeCache.at(i).get()->addEdge(ptr);
+            nodeCache.at(i).get()->addEdge(ptr);
         }
         i++;
     }
