@@ -31,7 +31,8 @@ bool GraphNode<T>::addEdge(std::shared_ptr<GraphNode<T>> targetNode) {
     for (auto &edge: edges) {
         if (auto tempSharedPtr = edge.lock()) {
             if (tempSharedPtr->getKey() == targetNode->getKey()) {
-                std::cout << "It already has the edge towards " << targetNode->getKey() << std::endl;
+                std::cout << "[Duplicate edge] " << getKey() << " already has the edge towards " << targetNode->getKey()
+                          << std::endl;
                 return false;
             }
         } else {
