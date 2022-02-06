@@ -27,10 +27,9 @@ RWFileHandler<T>::readInputGraph(const std::string &fileName, std::map<T, std::v
         return {false, 0, 0};
     }
 
-    inputFile >> numberOfNodes >> numberOfEdges;
+    inputFile >> numberOfNodes >> numberOfEdges; // Read the header that contains the number of nodes and edges
 
     while (inputFile >> sourceEdge >> destinationEdge) {
-//        std::cout << sourceEdge << "\t" << destinationEdge << std::endl;
         graphBuffer[sourceEdge].push_back(destinationEdge);
         graphBuffer[destinationEdge];
         numberOfLinesRead++;
@@ -38,7 +37,7 @@ RWFileHandler<T>::readInputGraph(const std::string &fileName, std::map<T, std::v
     inputFile.close();
 
     std::cout << numberOfLinesRead << "/" << numberOfEdges << " lines has been read" << std::endl;
-    if (numberOfLinesRead < numberOfEdges) { // Adding the first row
+    if (numberOfLinesRead != numberOfEdges) { // Adding the first row
         std::cout << "The input file: " << fileName << " has been corrupted!" << std::endl;
         return {false, 0, 0};
     }
