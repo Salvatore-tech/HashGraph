@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <map>
+#include <stack>
 #include "HashTable.h"
 #include "hashingStrategy/api/LinearProbingStrategy.h"
 
@@ -12,9 +13,7 @@ class HashTable<int>; // Types of values stored into the hash table
 
 template<typename T>
 HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
-    table = new GraphNode<T> *[capacity];
-    for (int i = 0; i < capacity; i++)
-        table[i] = nullptr;
+    table = new std::shared_ptr<GraphNode<T>>[bucketNo];
     hashingStrategy = new LinearProbingStrategy<T>(capacity);
     size = 0;
     loadFactor = 0;
@@ -22,26 +21,36 @@ HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
 
 template<typename T>
 HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
+    std::vector<std::shared_ptr<GraphNode<T>>> edgeCache;
+
     for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
-        int index = this->insert(new GraphNode(keyOfTheNode));
-        if (index >= 0)
-            table[index]->addEdge(edgesOfTheNode);
+        int index = this->insert(std::make_shared<GraphNode<T>>(keyOfTheNode));
+        edgeCache.emplace_back(table[index]);
+    }
+
+    int i = 0;
+    for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
+        for (auto const &edgeKey: edgesOfTheNode) {
+            auto ptr = getByKey(edgeKey);
+            edgeCache.at(i).get()->addEdge(ptr);
+        }
+        i++;
     }
 }
 
 template<typename T>
-int HashTable<T>::insert(GraphNode<T> *graphNode) {
-    int iterationNo = 0;
-    if (getByKey(graphNode->key)) // Avoid duplicate keys in the table
-        return -1;
+void HashTable<T>::insert(T nodeKey) {
+    if (insert(std::make_shared<GraphNode<T>>(nodeKey)))
+        std::cout << "Added node to the table with key = " << nodeKey << std::endl;
+    else
+        std::cout << "Could not add the node to the table with key = " << nodeKey << std::endl;
+}
 
-    int hashIndex = hashingStrategy->hashCode(graphNode->key);
-    // find next free space
-    while (table[hashIndex] != nullptr
-           && table[hashIndex]->key != graphNode->key
-           && table[hashIndex]->key != -1) {
-        hashingStrategy->rehash(graphNode->key, ++iterationNo);
-    }
+template<typename T>
+int HashTable<T>::insert(std::shared_ptr<GraphNode<T>> graphNode) {
+    int hashIndex = 0;
+    if (getByKey(graphNode->key, hashIndex) && loadFactor < 0.70) // Avoid duplicate keys in the table
+        return -1;
     size++;
     table[hashIndex] = graphNode;
     loadFactor = (float) size / (float) capacity;
@@ -50,75 +59,58 @@ int HashTable<T>::insert(GraphNode<T> *graphNode) {
 
 template<typename T>
 void HashTable<T>::deleteByKey(T key) {
-    if (auto nodeToDelete = getNodeRefByKey(key); nodeToDelete != nullptr) {
-        free(*nodeToDelete);
-        *nodeToDelete = dummy;
+    int index = hashingStrategy->hashCode(key);
+    if (table[index].get()) {
+        table[index].reset();
         size--;
         loadFactor = (float) size / (float) capacity;
         std::cout << "Node with key " << key << " erased\n";
     } else
-        std::cout << "Could not erase node with key " << key << "\n";
+        std::cout << "Could not delete node with key " << key << std::endl;
 }
 
-template<typename T>
-GraphNode<T> *HashTable<T>::getByKey(T key) {
-    int hashIndex = hashingStrategy->hashCode(key); // TODO rehash needed?
-    int loopCounter = 0;
-
-    while (table[hashIndex] != nullptr) {
-        if (loopCounter++ > capacity)
-            return nullptr;
-
-        if (table[hashIndex]->key == key)
-            return table[hashIndex];
-
-        hashIndex++;
-        hashIndex %= capacity;
-    }
-    return nullptr;
-}
 
 template<typename T>
-GraphNode<T> **HashTable<T>::getNodeRefByKey(T key) {
+std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key) {
     int hashIndex = hashingStrategy->hashCode(key);
-    int loopCounter = 0;
+    int iterationNo = 0;
 
-    while (table[hashIndex] != nullptr) {
-        if (loopCounter++ > capacity)
-            return nullptr;
+    while (table[hashIndex].get() && table[hashIndex]->key != key)
+        hashIndex = hashingStrategy->rehash(key, ++iterationNo);
 
-        if (table[hashIndex]->key == key)
-            return &table[hashIndex];
-
-        hashIndex++;
-        hashIndex %= capacity;
-    }
-    return nullptr;
+    return table[hashIndex];
 }
 
 template<typename T>
-GraphNode<T> *HashTable<T>::findEdge(T sourceNodeKey, T targetNodeKey) {
-    GraphNode<T> *sourceNode = getByKey(sourceNodeKey);
-    if (!sourceNode)
-        return nullptr;
-    for (auto const &edge: sourceNode->edges)
-        if (edge->key == targetNodeKey)
-            return edge;
-    return nullptr;
+std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key, int &hashIndex) {
+    hashIndex = hashingStrategy->hashCode(key);
+    int iterationNo = 0;
+
+    while (table[hashIndex].get() && table[hashIndex]->key != key)
+        hashIndex = hashingStrategy->rehash(key, ++iterationNo);
+    return table[hashIndex];
 }
 
 template<typename T>
-GraphNode<T> *HashTable<T>::findEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode) {
+bool HashTable<T>::findEdge(T sourceNodeKey, T targetNodeKey) {
+    auto sourceNode = getByKey(sourceNodeKey);
+    if (!sourceNode.get())
+        return false;
+    return sourceNode->hasEdge(targetNodeKey);
+}
+
+template<typename T>
+bool HashTable<T>::findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode) {
     return findEdge(sourceNode->key, targetNode->key);
 }
 
 
 template<typename T>
 void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
-    GraphNode<T> *sourceNode = getByKey(sourceNodeKey);
-    GraphNode<T> *targetNode = getByKey(targetNodeKey);
-    if (sourceNode && targetNode && !findEdge(sourceNode, targetNode)) {// Avoid duplicate edges
-        if (sourceNode->addEdge(*targetNode))
+    auto sourceNode = getByKey(sourceNodeKey);
+    auto targetNode = getByKey(targetNodeKey);
+    if (sourceNode.get() && targetNode.get() && !findEdge(sourceNode, targetNode)) {// Avoid duplicate edges
+        if (sourceNode->addEdge(targetNode))
             std::cout << "Added edge between " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
     }
     std::cout << "Could not add the edge between " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
@@ -126,14 +118,20 @@ void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
 
 template<typename T>
 void HashTable<T>::removeEdge(T sourceNodeKey, T targetNodeKey) {
-    GraphNode<T> *sourceNode = getByKey(sourceNodeKey);
-    std::vector<GraphNode<T> *> &edgesOfTheSourceNode = sourceNode->getEdges();
-    int initialEdges = edgesOfTheSourceNode.size();
+    auto sourceNode = getByKey(sourceNodeKey);
+    if (!sourceNode.get()) {
+        std::cout << "Could not find a node with the given key\n ";
+        return;
+    }
 
-    std::erase_if(edgesOfTheSourceNode, [&targetNodeKey](GraphNode<T> *edge) { return edge->key == targetNodeKey; });
+    auto edgesOfTheSourceNode = sourceNode->getEdgesPtr();
+    int initialEdges = edgesOfTheSourceNode->size();
 
-    int edgesAfterEraseOperation = edgesOfTheSourceNode.size();
+    std::erase_if(*edgesOfTheSourceNode, [&targetNodeKey](auto edge) {
+        return edge.lock()->getKey() == targetNodeKey;
+    });
 
+    int edgesAfterEraseOperation = edgesOfTheSourceNode->size();
     if (edgesAfterEraseOperation < initialEdges)
         std::cout << "Erased edge from " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
     else
@@ -141,7 +139,7 @@ void HashTable<T>::removeEdge(T sourceNodeKey, T targetNodeKey) {
 }
 
 template<typename T>
-GraphNode<T> *HashTable<T>::operator[](int index) const {
+std::shared_ptr<GraphNode<T>> HashTable<T>::operator[](int index) const {
     if (index >= capacity) {
         std::cout << "Index out of bound" << std::endl;
     }
@@ -152,6 +150,18 @@ template<typename T>
 int HashTable<T>::getSize() const {
     return size;
 }
+
+template<typename T>
+HashTable<T>::~HashTable() {
+    delete hashingStrategy;
+    for (int i = 0; i < capacity; i++) {
+        table[i].reset();
+    }
+    delete[] table;
+}
+
+
+
 
 
 

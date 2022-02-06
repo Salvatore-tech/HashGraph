@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <iostream>
-#include "GraphNodeType.h"
+#include <memory>
 
 template<typename T>
 class GraphNode {
@@ -17,15 +17,13 @@ public:
 
     T getKey() const;
 
-    std::vector<GraphNode *> &getEdges();
+    std::vector<std::weak_ptr<GraphNode<T>>> getEdges();
 
     bool hasEdge(T key);
 
-    bool hasEdge(const GraphNode &targetNode) const;
+    bool hasEdge(const GraphNode<T> &targetNode);
 
-    void addEdge(std::vector<T> neighboursKey);
-
-    bool addEdge(const GraphNode &targetNode);
+    bool addEdge(std::shared_ptr<GraphNode<T>> targetNode);
 
     void eraseEdges() {
         edges.clear();
@@ -39,9 +37,10 @@ public:
     class HashTable;
 
 private:
+    std::vector<std::weak_ptr<GraphNode<T>>> *getEdgesPtr();
+
     T key;
-    GraphNodeType nodeType;
-    std::vector<GraphNode *> edges;
+    std::vector<std::weak_ptr<GraphNode<T>>> edges;
 };
 
 

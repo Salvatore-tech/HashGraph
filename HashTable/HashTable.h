@@ -10,25 +10,33 @@
 #include <ostream>
 #include <map>
 #include <iomanip>
+#include <memory>
 #include "../Graph/GraphNode.h"
 #include "hashingStrategy/api/HashingStrategy.h"
 
 template<typename T>
 class HashTable {
 public:
-    HashTable(int bucketNo);
+    explicit HashTable(int bucketNo);
 
     HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
 
-    int insert(GraphNode<T> *graphNode);
+    virtual ~HashTable();
+
+    int insert(std::shared_ptr<GraphNode<T>> graphNode);
+
+    void insert(T nodeKey);
 
     void deleteByKey(T key);
 
-    GraphNode<T> *getByKey(T key);
+    std::shared_ptr<GraphNode<T>> getByKey(T key);
 
-    GraphNode<T> *findEdge(T sourceNodeKey, T targetNodeKey);
+    std::shared_ptr<GraphNode<T>> getByKey(T key, int &hashIndex);
 
-    GraphNode<T> *findEdge(GraphNode<T> *sourceNode, GraphNode<T> *targetNode);
+    bool findEdge(T sourceNodeKey, T targetNodeKey);
+
+    bool
+    findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode);
 
     void addEdge(T sourceNodeKey, T targetNodeKey);
 
@@ -36,29 +44,38 @@ public:
 
     int getSize() const;
 
-    GraphNode<T> *operator[](int) const;
+    std::shared_ptr<GraphNode<T>> operator[](int) const;
 
     friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) {
         os << "HashTable data: " << " capacity: " << table.capacity << " size: " << table.size << " load: "
            << std::setprecision(2) << table.loadFactor << std::endl;
         for (int i = 0; i < table.capacity; i++)
-            if (table[i] == nullptr || table[i] == dummy)
+            if (!table[i].get())
                 os << "[" << i << "]: is empty" << std::endl;
-            else if (table[i]->getEdges().empty()) { // The node has its adiajency list empty
-                os << "[" << i << "]: " << table[i]->getKey() << std::endl;
-            } else {
-                os << "[" << i << "]: " << table[i]->getKey() << " has edges towards: ";
-                for (auto const &edge: table[i]->getEdges())
-                    os << edge->getKey() << " ";
-                std::endl(os);
+            else {
+                const auto keyOfTheNode = table[i]->getKey();
+                auto edgesOfTheNode = table[i]->getEdges();
+
+                if (edgesOfTheNode.empty()) { // The node no edges
+                    os << "[" << i << "]: " << keyOfTheNode << std::endl;
+                } else {
+                    os << "[" << i << "]: " << keyOfTheNode << " has edges towards: ";
+                    int j = 0;
+                    for (auto const &edge: edgesOfTheNode) {
+                        if (const auto observe = edge.lock()) {
+                            os << observe->getKey() << " ";
+                        } else
+                            edgesOfTheNode.erase(edgesOfTheNode.begin() + j);
+                        j++;
+                    }
+                    std::endl(os);
+                }
             }
         return os;
     }
 
 private:
-    GraphNode<T> **getNodeRefByKey(T key);
-
-    GraphNode<T> **table;
+    std::shared_ptr<GraphNode<T>> *table;
     HashingStrategy<T> *hashingStrategy;
     constexpr static GraphNode<T> *dummy{};
     int capacity;

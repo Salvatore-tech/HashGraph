@@ -48,7 +48,11 @@ int main() {
                 break;
             case 4:
                 getInputAndTargetNode(&sourceNodeKey, &targetNodeKey);
-                hashTable.findEdge(sourceNodeKey, targetNodeKey);
+                if (hashTable.findEdge(sourceNodeKey, targetNodeKey))
+                    std::cout << "Edge found between: " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
+                else
+                    std::cout <<
+                              "There is not an edge between " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
                 break;
             case 5:
                 std::cout << "Insert source node key: ";

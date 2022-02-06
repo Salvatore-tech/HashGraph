@@ -13,11 +13,11 @@ class RWFileHandler<int>; // Types of input file data
 template<typename T>
 FileMetadata
 RWFileHandler<T>::readInputGraph(const std::string &fileName, std::map<T, std::vector<T>> &graphBuffer) const {
-    int sourceEdge;
-    int destinationEdge;
-    int numberOfLinesRead;
-    int numberOfEdges;
-    int numberOfNodes;
+    int sourceEdge = 0;
+    int destinationEdge = 0;
+    int numberOfLinesRead = 0;
+    int numberOfEdges = 0;
+    int numberOfNodes = 0;
     std::ifstream inputFile;
 
     std::cout << "Reading " << fileName << std::endl;
@@ -27,10 +27,9 @@ RWFileHandler<T>::readInputGraph(const std::string &fileName, std::map<T, std::v
         return {false, 0, 0};
     }
 
-    inputFile >> numberOfNodes >> numberOfEdges;
+    inputFile >> numberOfNodes >> numberOfEdges; // Read the header that contains the number of nodes and edges
 
     while (inputFile >> sourceEdge >> destinationEdge) {
-//        std::cout << sourceEdge << "\t" << destinationEdge << std::endl;
         graphBuffer[sourceEdge].push_back(destinationEdge);
         graphBuffer[destinationEdge];
         numberOfLinesRead++;
@@ -38,7 +37,7 @@ RWFileHandler<T>::readInputGraph(const std::string &fileName, std::map<T, std::v
     inputFile.close();
 
     std::cout << numberOfLinesRead << "/" << numberOfEdges << " lines has been read" << std::endl;
-    if (numberOfLinesRead < numberOfEdges) { // Adding the first row
+    if (numberOfLinesRead != numberOfEdges) { // Adding the first row
         std::cout << "The input file: " << fileName << " has been corrupted!" << std::endl;
         return {false, 0, 0};
     }
