@@ -14,6 +14,8 @@
 #include "../Graph/GraphNode.h"
 #include "hashingStrategy/api/HashingStrategy.h"
 
+static const double max_load_factor = 0.70; // Maximum load factor for open addressing tecnique
+
 template<typename T>
 class HashTable {
 public:
@@ -35,8 +37,7 @@ public:
 
     bool findEdge(T sourceNodeKey, T targetNodeKey);
 
-    bool
-    findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode);
+    bool findEdge(std::shared_ptr<GraphNode<T>> sourceNode, std::shared_ptr<GraphNode<T>> targetNode);
 
     void addEdge(T sourceNodeKey, T targetNodeKey);
 
@@ -47,7 +48,8 @@ public:
     std::shared_ptr<GraphNode<T>> operator[](int) const;
 
     friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) {
-        os << "HashTable data: " << " capacity: " << table.capacity << " size: " << table.size << " load: "
+        os << "HashTable data: " << "capacity " << table.capacity << "; elements inserted " << table.size
+           << "; load factor: "
            << std::setprecision(2) << table.loadFactor << std::endl;
         for (int i = 0; i < table.capacity; i++)
             if (!table[i].get())
@@ -61,7 +63,7 @@ public:
                 } else {
                     os << "[" << i << "]: " << keyOfTheNode << " has edges towards: ";
                     int j = 0;
-                    for (auto const &edge: edgesOfTheNode) {
+                    for (const auto &edge: edgesOfTheNode) {
                         if (const auto observe = edge.lock()) {
                             os << observe->getKey() << " ";
                         } else
@@ -77,10 +79,9 @@ public:
 private:
     std::shared_ptr<GraphNode<T>> *table;
     HashingStrategy<T> *hashingStrategy;
-    constexpr static GraphNode<T> *dummy{};
     int capacity;
     int size;
-    float loadFactor{};
+    float loadFactor;
 };
 
 #endif //HASHGRAPH_HASHTABLE_H

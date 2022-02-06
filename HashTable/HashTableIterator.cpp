@@ -32,8 +32,10 @@ void HashTableIterator<T>::dfs(T keyOfStartingNode) const {
             std::cout << currentGraphNode->getKey() << " ";
             visited[currentGraphNode->getKey()] = true;
         }
-//        for (auto const &edge: currentGraphNode->getEdges()) TODO
-//            if (!visited[edge->getKey()])
-//                stack.push(edge);
+        for (const auto &edge: currentGraphNode->getEdges())
+            if (const auto observe = edge.lock()) {
+                if (!visited[observe->getKey()])
+                    stack.push(observe);
+            }
     }
 }

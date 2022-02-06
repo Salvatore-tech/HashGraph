@@ -5,6 +5,7 @@
 #ifndef HASHGRAPH_FILEMETADATA_H
 #define HASHGRAPH_FILEMETADATA_H
 
+static const char *const inputFileName = "./resources/input0_2_1.txt";
 
 class FileMetadata {
 public:

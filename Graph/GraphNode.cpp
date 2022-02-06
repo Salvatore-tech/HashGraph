@@ -35,7 +35,7 @@ bool GraphNode<T>::addEdge(std::shared_ptr<GraphNode<T>> targetNode) {
                 return false;
             }
         } else {
-            edges.erase(edges.begin() + index); //Erasing an expired weak pointer
+            edges.erase(edges.begin() + index); // Erasing an expired weak pointer
         }
         index++;
     }

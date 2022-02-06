@@ -49,7 +49,7 @@ void HashTable<T>::insert(T nodeKey) {
 template<typename T>
 int HashTable<T>::insert(std::shared_ptr<GraphNode<T>> graphNode) {
     int hashIndex = 0;
-    if (getByKey(graphNode->key, hashIndex) && loadFactor < 0.70) // Avoid duplicate keys in the table
+    if (getByKey(graphNode->key, hashIndex) && loadFactor < max_load_factor) // Avoid duplicate keys in the table
         return -1;
     size++;
     table[hashIndex] = graphNode;
@@ -112,8 +112,8 @@ void HashTable<T>::addEdge(T sourceNodeKey, T targetNodeKey) {
     if (sourceNode.get() && targetNode.get() && !findEdge(sourceNode, targetNode)) {// Avoid duplicate edges
         if (sourceNode->addEdge(targetNode))
             std::cout << "Added edge between " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
-    }
-    std::cout << "Could not add the edge between " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
+    } else
+        std::cout << "Could not add the edge between " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
 }
 
 template<typename T>
