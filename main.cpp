@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Graph/GraphNode.h"
+#include "GraphNode.h"
 #include "HashTable/HashTable.h"
 #include "IO/InputOutputHandler.h"
 #include "IO/FileMetadata.h"
