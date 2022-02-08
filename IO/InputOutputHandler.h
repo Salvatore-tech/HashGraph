@@ -14,9 +14,7 @@ class InputOutputHandler {
 public:
     FileMetadata readInputGraph(const std::string &fileName, std::map<T, std::vector<T>> &graphBuffer) const;
 
-    void displayMenu();
-
-    void getInputAndTargetNode(int *sourceNodeKey, int *targetNodeKey);
+    void requestSourceAndTargetNode(int *sourceNodeKey, int *targetNodeKey);
 
     void requestInput();
 };

@@ -45,21 +45,7 @@ InputOutputHandler<T>::readInputGraph(const std::string &fileName, std::map<T, s
 }
 
 template<typename T>
-void InputOutputHandler<T>::displayMenu() {
-    std::cout << "\n \t \t [HashGraph menu] \n";
-    std::cout << "Choose an operation \n";
-    std::cout << "1) Display graph \n";
-    std::cout << "2) Add an edge between two nodes \n";
-    std::cout << "3) Remove an edge between two nodes \n";
-    std::cout << "4) Find an edge between two nodes \n";
-    std::cout << "5) Depth first search \n";
-    std::cout << "6) Delete a node \n";
-    std::cout << "0) Exit \n";
-
-}
-
-template<typename T>
-void InputOutputHandler<T>::getInputAndTargetNode(int *sourceNodeKey, int *targetNodeKey) {
+void InputOutputHandler<T>::requestSourceAndTargetNode(int *sourceNodeKey, int *targetNodeKey) {
     std::cout << "Enter the key of the source node: ";
     std::cin >> *sourceNodeKey;
     std::cout << "\nEnter the key of the target node: ";
