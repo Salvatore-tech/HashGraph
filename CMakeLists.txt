@@ -5,8 +5,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-set(SOURCE_FILES main.cpp HashTable/HashTable.cpp HashTable/HashTable.h IO/InputOutputHandler.cpp IO/InputOutputHandler.h IO/FileMetadata.h HashTable/HashTableIterator.cpp HashTable/HashTableIterator.h HashTable/hashingStrategy/api/HashingStrategy.h HashTable/hashingStrategy/impl/DoubleHashingStrategy.cpp HashTable/hashingStrategy/api/DoubleHashingStrategy.h HashTable/hashingStrategy/impl/LinearProbingStrategy.cpp HashTable/hashingStrategy/api/LinearProbingStrategy.h)
-add_executable(HashGraph ${SOURCE_FILES})
+set(INCLUDE_FILES hash_table/HashTable.h IO/InputOutputHandler.h IO/FileMetadata.h hash_table/HashTableIterator.h hashing_strategy/api/HashingStrategy.h hashing_strategy/api/DoubleHashingStrategy.h hashing_strategy/api/LinearProbingStrategy.h)
+set(SOURCE_FILES main.cpp hash_table/HashTable.cpp IO/InputOutputHandler.cpp hash_table/HashTableIterator.cpp hashing_strategy/impl/DoubleHashingStrategy.cpp hashing_strategy/impl/LinearProbingStrategy.cpp)
+add_executable(HashGraph ${INCLUDE_FILES} ${SOURCE_FILES})
 
 
 include(FindPkgConfig)

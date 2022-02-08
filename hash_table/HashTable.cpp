@@ -6,8 +6,9 @@
 #include <map>
 #include <stack>
 #include <assert.h>
+
 #include "HashTable.h"
-#include "hashingStrategy/api/LinearProbingStrategy.h"
+#include "../hashing_strategy/api/LinearProbingStrategy.h"
 
 template
 class HashTable<int>; // Types of values stored into the hash table

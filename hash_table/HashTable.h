@@ -11,8 +11,9 @@
 #include <map>
 #include <iomanip>
 #include <memory>
+
 #include "GraphNode.h"
-#include "hashingStrategy/api/HashingStrategy.h"
+#include "../hashing_strategy/api/HashingStrategy.h"
 
 static const double max_load_factor = 0.70; // Maximum load factor for open addressing tecnique
 
