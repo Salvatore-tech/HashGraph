@@ -1,9 +1,8 @@
 #include <iostream>
-#include "GraphNode.h"
-#include "HashTable/HashTable.h"
+#include "hash_table//HashTable.h"
 #include "IO/InputOutputHandler.h"
 #include "IO/FileMetadata.h"
-#include "HashTable/HashTableIterator.h"
+#include "hash_table//HashTableIterator.h"
 
 int main() {
     int sourceNodeKey;
