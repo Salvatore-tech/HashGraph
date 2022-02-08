@@ -1,6 +1,6 @@
 #include <iostream>
 #include "hash_table/api/HashTable.h"
-#include "IO/InputOutputHandler.h"
+#include "../iograph/InputOutputHandler.h"
 #include "hash_table/api/HashTableIterator.h"
 
 static const char *const inputFileName = "./resources/input0_2_1.txt";
