@@ -10,14 +10,11 @@
 template<typename T>
 class LinearProbingStrategy : public HashingStrategy<T> {
 public:
-    explicit LinearProbingStrategy(int tableSize) : tableSize(tableSize) {}
+    explicit LinearProbingStrategy(int tableSize) : HashingStrategy<T>(tableSize) {}
 
     int hashCode(T key) override;
 
     int rehash(T key, int iterationNo) override;
-
-private:
-    int tableSize;
 };
 
 

@@ -9,7 +9,7 @@ template
 class DoubleHashingStrategy<int>;
 
 template<typename T>
-DoubleHashingStrategy<T>::DoubleHashingStrategy(int tableSize) : tableSize(tableSize) {
+DoubleHashingStrategy<T>::DoubleHashingStrategy(int tableSize) : HashingStrategy<T>(tableSize) {
     setSieve();
 }
 
@@ -18,18 +18,18 @@ void DoubleHashingStrategy<T>::setSieve() {
     // Create a boolean array "prime[0..tableSize]" and initialize
     // all entries it as true. A value in prime[i] will
     // finally be false if i is Not a prime, else true.
-    std::vector<bool> prime(tableSize + 1, true);
+    std::vector<bool> prime(this->tableSize + 1, true);
 
-    for (int p = 2; p * p <= tableSize; p++) {
+    for (int p = 2; p * p <= this->tableSize; p++) {
         // If prime[p] is not changed,
         // then it is a prime
         if (prime[p]) {
-            for (int i = p * p; i <= tableSize; i += p)
+            for (int i = p * p; i <= this->tableSize; i += p)
                 prime[i] = false;
         }
     }
 
-    for (int i = tableSize; i >= 2; i--)
+    for (int i = this->tableSize; i >= 2; i--)
         if (prime[i]) {
             primeNumber = prime[i];
             return;
@@ -44,12 +44,12 @@ int DoubleHashingStrategy<T>::hashCode(T key) {
 
 template<typename T>
 int DoubleHashingStrategy<T>::firstHashCode(T key) {
-    return (key % tableSize);
+    return (key % this->tableSize);
 }
 
 template<typename T>
 int DoubleHashingStrategy<T>::rehash(T key, int iterationNo) {
-    return (firstHashCode(key) + iterationNo * secondHashCode(key)) % tableSize;
+    return (firstHashCode(key) + iterationNo * secondHashCode(key)) % this->tableSize;
 }
 
 template<typename T>

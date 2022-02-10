@@ -9,7 +9,7 @@ class LinearProbingStrategy<int>;
 
 template<typename T>
 int LinearProbingStrategy<T>::hashCode(T key) {
-    return (key % tableSize);
+    return (key % this->tableSize);
 }
 
 template<typename T>

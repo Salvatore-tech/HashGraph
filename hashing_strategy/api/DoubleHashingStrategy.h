@@ -25,7 +25,6 @@ private:
 
     void setSieve();
 
-    int tableSize;
     int primeNumber;
 };
 
