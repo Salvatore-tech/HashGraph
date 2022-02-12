@@ -6,5 +6,5 @@ find_path(IOGRAPH_INCLUDE_DIR FileMetadata.h InputOutputHandler.h
 
 find_library(IOGRAPH_LIBRARY               # The variable to store where it found the .a files
         NAMES iograph                      # The name of the .a file (without the extension and without the 'lib')
-        PATH_SUFFIXES lib                   # The folder the .a file is in
+        PATH_SUFFIXES build                   # The folder the .a file is in
         PATHS ${FIND_IOGRAPH_PATHS})
