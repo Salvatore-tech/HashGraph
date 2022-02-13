@@ -15,7 +15,7 @@ HashTableIterator<T>::HashTableIterator(HashTable<T> &hashTable):hashTable(hashT
 
 template<typename T>
 void HashTableIterator<T>::dfs(T keyOfStartingNode) const {
-    std::vector<bool> visited(hashTable.getSize() + 1, false);
+    std::vector<bool> visited(hashTable.getSize(), false);
     std::stack<std::shared_ptr<GraphNode<T>>> stack;
     auto startingNode = hashTable.getByKey(keyOfStartingNode);
 
