@@ -8,7 +8,7 @@
 #include <assert.h>
 
 #include "../api/HashTable.h"
-#include "../../hashing_strategy/api/LinearProbingStrategy.h"
+#include "LinearProbingStrategy.h"
 
 template
 class HashTable<int>; // Types of values stored into the hash table
