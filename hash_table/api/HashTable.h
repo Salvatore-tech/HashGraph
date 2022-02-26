@@ -24,15 +24,15 @@ public:
 
     HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
 
-    virtual ~HashTable();
-
-    int insert(std::shared_ptr<GraphNode<T>> graphNode);
+    void setHashingStrategy(char *string);
 
     void insert(T nodeKey);
 
+    int insert(std::shared_ptr<GraphNode<T>> graphNode);
+
     void deleteByKey(T key);
 
-    std::shared_ptr<GraphNode<T>> getByKey(T key);
+    std::shared_ptr<GraphNode<T>> getByKey(T key) const;
 
     std::shared_ptr<GraphNode<T>> getByKey(T key, int &hashIndex);
 
@@ -44,7 +44,7 @@ public:
 
     void removeEdge(T sourceNodeKey, T targetNodeKey);
 
-    int getSize() const;
+    void dfs(T keyOfStartingNode) const;
 
     std::shared_ptr<GraphNode<T>> operator[](int) const;
 
@@ -76,6 +76,8 @@ public:
             }
         return os;
     }
+
+    virtual ~HashTable();
 
 private:
     std::shared_ptr<GraphNode<T>> *table;

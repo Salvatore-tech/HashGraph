@@ -1,25 +1,25 @@
 #include <iostream>
 #include "InputOutputHandler.h"
 #include "hash_table/api/HashTable.h"
-#include "hash_table/api/HashTableIterator.h"
 
 static const char *const inputFileName = "./resources/input0_2_1.txt";
 
 void displayMenu();
 
-int main() {
-    int sourceNodeKey;
-    int targetNodeKey;
+int main(int argc, char **argv) {
+    int sourceNodeKey = -1;
+    int targetNodeKey = -1;
     int choice = 0;
-    std::map<int, std::vector<int>> inputFileGraphBuffer;
+    std::map<int, std::vector<int>> inputFileGraphBuffer; // Buffer that contains data from the input txt file
     auto inputOutputHandler = InputOutputHandler<int>();
-    auto fileMetadata = inputOutputHandler.readInputGraph(inputFileName, inputFileGraphBuffer);
+    auto fileMetadata = inputOutputHandler.readInputGraph(inputFileName, inputFileGraphBuffer); // Filling the buffer
 
-    if (!fileMetadata.getOperationStatus())
+    if (!fileMetadata.getOperationStatus()) // File read failed
         return -1;
 
-    HashTable hashTable = HashTable<int>(inputFileGraphBuffer, fileMetadata.getNumberOfNodes() * 2);
-    auto tableIterator = HashTableIterator<int>(hashTable);
+    HashTable hashTable = HashTable<int>(inputFileGraphBuffer, fileMetadata.getNumberOfNodes() *
+                                                               2); // Create the hash table and inserting data into it
+    hashTable.setHashingStrategy(argv[1]); // Setting the hashing strategy, by default is linear probing
 
     do {
         displayMenu();
@@ -48,7 +48,7 @@ int main() {
             case 5:
                 std::cout << "Insert source node key: ";
                 std::cin >> sourceNodeKey;
-                tableIterator.dfs(sourceNodeKey);
+                hashTable.dfs(sourceNodeKey);
                 break;
             case 6:
                 std::cout << "Insert source node key: ";
@@ -63,6 +63,7 @@ int main() {
 }
 
 void displayMenu() {
+    std::flush(std::cout);
     std::cout << "\n \t \t [HashGraph menu] \n";
     std::cout << "Choose an operation \n";
     std::cout << "1) Display graph \n";

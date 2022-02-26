@@ -6,9 +6,11 @@
 #include <map>
 #include <stack>
 #include <assert.h>
+#include <cstring>
 
 #include "../api/HashTable.h"
 #include "LinearProbingStrategy.h"
+#include "DoubleHashingStrategy.h"
 
 template
 class HashTable<int>; // Types of values stored into the hash table
@@ -33,9 +35,7 @@ HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int number
         else
             std::cerr << "Error when reading from graph buffer\n";
     }
-
     assert(nodeCache.size() == graphData.size());
-
     int i = 0;
     for (auto const&[keyOfTheNode, edgesOfTheNode]: graphData) {
         for (auto const &edgeKey: edgesOfTheNode) {
@@ -43,6 +43,17 @@ HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int number
             nodeCache.at(i).get()->addEdge(ptr);
         }
         i++;
+    }
+}
+
+template<typename T>
+void HashTable<T>::setHashingStrategy(char *strategy) {
+    if (strategy == nullptr || strcmp("linear", strategy) == 0) {
+        hashingStrategy = new LinearProbingStrategy<T>(size);
+        std::cout << "Using a linear probing hashing strategy" << std::endl;
+    } else {
+        hashingStrategy = new DoubleHashingStrategy<T>(size);
+        std::cout << "Using a double hashing strategy" << std::endl;
     }
 }
 
@@ -79,7 +90,7 @@ void HashTable<T>::deleteByKey(T key) {
 
 
 template<typename T>
-std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key) {
+std::shared_ptr<GraphNode<T>> HashTable<T>::getByKey(T key) const {
     int hashIndex = hashingStrategy->hashCode(key);
     int iterationNo = 0;
 
@@ -155,17 +166,40 @@ std::shared_ptr<GraphNode<T>> HashTable<T>::operator[](int index) const {
 }
 
 template<typename T>
-int HashTable<T>::getSize() const {
-    return size;
-}
-
-template<typename T>
 HashTable<T>::~HashTable() {
     delete hashingStrategy;
     for (int i = 0; i < capacity; i++) {
         table[i].reset();
     }
     delete[] table;
+}
+
+
+template<typename T>
+void HashTable<T>::dfs(T keyOfStartingNode) const {
+    std::vector<bool> visited(size, false);
+    std::stack<std::shared_ptr<GraphNode<T>>> stack;
+    auto startingNode = getByKey(keyOfStartingNode);
+
+    if (!startingNode) {
+        std::cout << "The key inserted is invalid, could not perform the DFS\n";
+        return;
+    }
+
+    stack.push(startingNode);
+    while (!stack.empty()) {
+        auto currentGraphNode = stack.top();
+        stack.pop();
+        if (!visited[currentGraphNode->getKey()]) {
+            std::cout << currentGraphNode->getKey() << " ";
+            visited[currentGraphNode->getKey()] = true;
+        }
+        for (const auto &edge: currentGraphNode->getEdges())
+            if (const auto observe = edge.lock()) {
+                if (!visited[observe->getKey()])
+                    stack.push(observe);
+            }
+    }
 }
 
 
