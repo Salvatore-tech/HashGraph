@@ -16,15 +16,14 @@ template
 class HashTable<int>; // Types of values stored into the hash table
 
 template<typename T>
-HashTable<T>::HashTable(int bucketNo) : capacity{bucketNo} {
-    table = new std::shared_ptr<GraphNode<T>>[bucketNo];
-    hashingStrategy = new LinearProbingStrategy<T>(capacity);
+HashTable<T>::HashTable(int capacity) : capacity{capacity} {
+    table.resize(capacity);
     size = 0;
     loadFactor = 0;
 }
 
 template<typename T>
-HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int numberOfNodes) : HashTable(numberOfNodes) {
+void HashTable<T>::fillTable(const std::map<T, std::vector<T>> &graphData) {
     std::vector<std::shared_ptr<GraphNode<T>>> nodeCache;
     nodeCache.reserve(graphData.size());
 
@@ -49,10 +48,10 @@ HashTable<T>::HashTable(const std::map<T, std::vector<T>> &graphData, int number
 template<typename T>
 void HashTable<T>::setHashingStrategy(char *strategy) {
     if (strategy == nullptr || strcmp("linear", strategy) == 0) {
-        hashingStrategy = new LinearProbingStrategy<T>(size);
+        hashingStrategy = new LinearProbingStrategy<T>(capacity);
         std::cout << "Using a linear probing hashing strategy" << std::endl;
     } else {
-        hashingStrategy = new DoubleHashingStrategy<T>(size);
+        hashingStrategy = new DoubleHashingStrategy<T>(capacity);
         std::cout << "Using a double hashing strategy" << std::endl;
     }
 }
@@ -171,7 +170,7 @@ HashTable<T>::~HashTable() {
     for (int i = 0; i < capacity; i++) {
         table[i].reset();
     }
-    delete[] table;
+    table.clear();
 }
 
 

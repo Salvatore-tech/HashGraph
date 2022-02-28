@@ -17,9 +17,10 @@ int main(int argc, char **argv) {
     if (!fileMetadata.getOperationStatus()) // File read failed
         return -1;
 
-    HashTable hashTable = HashTable<int>(inputFileGraphBuffer, fileMetadata.getNumberOfNodes() *
-                                                               2); // Create the hash table and inserting data into it
+    HashTable hashTable = HashTable<int>(
+            fileMetadata.getNumberOfNodes() + 1); // Create the hash table and inserting data into it
     hashTable.setHashingStrategy(argv[1]); // Setting the hashing strategy, by default is linear probing
+    hashTable.fillTable(inputFileGraphBuffer);
 
     do {
         displayMenu();

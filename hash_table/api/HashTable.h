@@ -20,9 +20,11 @@ static const double max_load_factor = 0.70; // Maximum load factor for open addr
 template<typename T>
 class HashTable {
 public:
-    explicit HashTable(int bucketNo);
+    using TableType = std::vector<std::shared_ptr<GraphNode<T>>>;
 
-    HashTable(const std::map<T, std::vector<T>> &graphData, int numbersOfNodes);
+    explicit HashTable(int capacity);
+
+    void fillTable(const std::map<T, std::vector<T>> &graphData);
 
     void setHashingStrategy(char *string);
 
@@ -80,7 +82,7 @@ public:
     virtual ~HashTable();
 
 private:
-    std::shared_ptr<GraphNode<T>> *table;
+    TableType table;
     HashingStrategy<T> *hashingStrategy;
     int capacity;
     int size;
