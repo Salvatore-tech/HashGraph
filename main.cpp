@@ -2,17 +2,22 @@
 #include "InputOutputHandler.h"
 #include "hash_table/api/HashTable.h"
 
-static const char *const inputFileName = "./resources/input0_2_1.txt";
-
 void displayMenu();
 
 int main(int argc, char **argv) {
     int sourceNodeKey = -1;
     int targetNodeKey = -1;
-    int choice = 0;
     std::map<int, std::vector<int>> inputFileGraphBuffer; // Buffer that contains data from the input txt file
     auto inputOutputHandler = InputOutputHandler<int>();
-    auto fileMetadata = inputOutputHandler.readInputGraph(inputFileName, inputFileGraphBuffer); // Filling the buffer
+    char *relativePathToInputFile = inputOutputHandler.getPathToInputFile(argv[1]);
+
+    if (!relativePathToInputFile) {
+        std::cerr << "Usage: ./HashGraph inputFileName.txt hashingStrategy[OPTIONAL]" << std::endl;
+        return -1;
+    }
+
+    auto fileMetadata = inputOutputHandler.readInputGraph(relativePathToInputFile,
+                                                          inputFileGraphBuffer); // Filling the buffer
 
     if (!fileMetadata.getOperationStatus()) // File read failed
         return -1;
@@ -22,6 +27,7 @@ int main(int argc, char **argv) {
     hashTable.setHashingStrategy(argv[1]); // Setting the hashing strategy, by default is linear probing
     hashTable.fillTable(inputFileGraphBuffer);
 
+    int choice = 0;
     do {
         displayMenu();
         std::cin >> choice;
