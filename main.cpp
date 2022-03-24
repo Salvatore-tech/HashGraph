@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 
     HashTable hashTable = HashTable<int>(
             fileMetadata.getNumberOfNodes() + 1); // Create the hash table and inserting data into it
-    hashTable.setHashingStrategy(argv[1]); // Setting the hashing strategy, by default is linear probing
+    hashTable.setHashingStrategy(argv[2]); // Setting the hashing strategy, by default is linear probing
     hashTable.fillTable(inputFileGraphBuffer);
 
     int choice = 0;
