@@ -1,6 +1,6 @@
 #include <iostream>
 #include "InputOutputHandler.h"
-#include "hash_table/api/HashTable.h"
+#include "hashgraph/api/HashGraph.h"
 
 void displayMenu();
 
@@ -22,10 +22,10 @@ int main(int argc, char **argv) {
     if (!fileMetadata.getOperationStatus()) // File read failed
         return -1;
 
-    HashTable hashTable = HashTable<int>(
+    HashGraph hashGraph = HashGraph<int>(
             fileMetadata.getNumberOfNodes() + 1); // Create the hash table and inserting data into it
-    hashTable.setHashingStrategy(argv[2]); // Setting the hashing strategy, by default is linear probing
-    hashTable.fillTable(inputFileGraphBuffer);
+    hashGraph.setHashingStrategy(argv[2]); // Setting the hashing strategy, by default is linear probing
+    hashGraph.fillTable(inputFileGraphBuffer);
 
     int choice = 0;
     do {
@@ -33,20 +33,20 @@ int main(int argc, char **argv) {
         std::cin >> choice;
         switch (choice) {
             case 1:
-                std::cout << hashTable;
+                std::cout << hashGraph;
                 inputOutputHandler.requestInput();
                 break;
             case 2:
                 inputOutputHandler.requestSourceAndTargetNode(&sourceNodeKey, &targetNodeKey);
-                hashTable.addEdge(sourceNodeKey, targetNodeKey);
+                hashGraph.addEdge(sourceNodeKey, targetNodeKey);
                 break;
             case 3:
                 inputOutputHandler.requestSourceAndTargetNode(&sourceNodeKey, &targetNodeKey);
-                hashTable.removeEdge(sourceNodeKey, targetNodeKey);
+                hashGraph.removeEdge(sourceNodeKey, targetNodeKey);
                 break;
             case 4:
                 inputOutputHandler.requestSourceAndTargetNode(&sourceNodeKey, &targetNodeKey);
-                if (hashTable.findEdge(sourceNodeKey, targetNodeKey))
+                if (hashGraph.findEdge(sourceNodeKey, targetNodeKey))
                     std::cout << "Edge found between: " << sourceNodeKey << " --> " << targetNodeKey << std::endl;
                 else
                     std::cout <<
@@ -55,12 +55,15 @@ int main(int argc, char **argv) {
             case 5:
                 std::cout << "Insert source node key: ";
                 std::cin >> sourceNodeKey;
-                hashTable.dfs(sourceNodeKey);
+                hashGraph.dfs(sourceNodeKey);
                 break;
             case 6:
                 std::cout << "Insert source node key: ";
                 std::cin >> sourceNodeKey;
-                hashTable.deleteByKey(sourceNodeKey);
+                hashGraph.deleteByKey(sourceNodeKey);
+                break;
+            case 0:
+                std::cout << "Bye!\n";
                 break;
             default:
                 std::cout << "Invalid number... retry!\n";

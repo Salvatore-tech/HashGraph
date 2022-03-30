@@ -3,8 +3,8 @@ project(HashGraph)
 set(CMAKE_CXX_STANDARD 20)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-set(INCLUDE_FILES hash_table/api/HashTable.h)
-set(SOURCE_FILES main.cpp hash_table/impl/HashTable.cpp)
+set(INCLUDE_FILES hashgraph/api/HashGraph.h)
+set(SOURCE_FILES main.cpp hashgraph/impl/HashGraph.cpp)
 add_executable(HashGraph ${INCLUDE_FILES} ${SOURCE_FILES})
 
 include(FindPkgConfig)

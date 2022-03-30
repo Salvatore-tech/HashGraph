@@ -2,8 +2,8 @@
 // Created by saso on 01/01/2022.
 //
 
-#ifndef HASHGRAPH_HASHTABLE_H
-#define HASHGRAPH_HASHTABLE_H
+#ifndef HASHGRAPH_HASHGRAPH_H
+#define HASHGRAPH_HASHGRAPH_H
 
 
 #include <list>
@@ -18,11 +18,11 @@
 static const double max_load_factor = 0.70; // Maximum load factor for open addressing tecnique
 
 template<typename T>
-class HashTable {
+class HashGraph {
 public:
     using TableType = std::vector<std::shared_ptr<GraphNode<T>>>;
 
-    explicit HashTable(int capacity);
+    explicit HashGraph(int capacity);
 
     void fillTable(const std::map<T, std::vector<T>> &graphData);
 
@@ -50,7 +50,7 @@ public:
 
     std::shared_ptr<GraphNode<T>> operator[](int) const;
 
-    friend std::ostream &operator<<(std::ostream &os, const HashTable<T> &table) {
+    friend std::ostream &operator<<(std::ostream &os, const HashGraph<T> &table) {
         os << "HashTable data: " << "capacity " << table.capacity << "; elements inserted " << table.size
            << "; load factor: "
            << std::setprecision(2) << table.loadFactor << std::endl;
@@ -79,7 +79,7 @@ public:
         return os;
     }
 
-    virtual ~HashTable();
+    virtual ~HashGraph();
 
 private:
     TableType table;
@@ -89,4 +89,4 @@ private:
     float loadFactor;
 };
 
-#endif //HASHGRAPH_HASHTABLE_H
+#endif //HASHGRAPH_HASHGRAPH_H
